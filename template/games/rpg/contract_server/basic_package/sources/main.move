@@ -1,4 +1,4 @@
-module rpg_game::main {
+module basic_package::main {
     use sui::object::{Self, ID, UID};
     use sui::transfer;
     // use sui::address;
