@@ -1,7 +1,7 @@
-module rpg_game::utils {
+module basic_package::utils {
     use sui::address;
     use sui::object::{Self, ID};
-    use rpg_game::main::GameInfo;
+    use basic_package::main::GameInfo;
 
     // --- Game integrity / Links checks ---
 

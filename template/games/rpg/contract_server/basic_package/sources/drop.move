@@ -1,4 +1,4 @@
-// module rpg_game::drop {
+// module basic_package::drop {
     // use sui::coin::{Self, Coin};
     // use sui::event;
     // use sui::object::{Self, ID, UID};

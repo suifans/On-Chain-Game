@@ -1,4 +1,4 @@
-module rpg_game::map {
+module basic_package::map {
     use sui::vec_map::VecMap;
     use sui::object::UID;
     // use rpg_game::main::{GameInfo, GameAdmin};

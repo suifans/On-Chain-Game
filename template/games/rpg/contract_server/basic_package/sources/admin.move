@@ -1,4 +1,4 @@
-module rpg_game::admin {
+module basic_package::admin {
     use sui::object::{ ID, UID};
     // use rpg_game::main::{GameInfo, GameAdmin};
     // use sui::tx_context::TxContext;

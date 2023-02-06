@@ -1,9 +1,9 @@
-module rpg_game::player {
+module basic_package::player {
     use sui::object::{Self, ID, UID};
     use sui::tx_context::{TxContext};
     use std::option::{Self, Option};
-    use rpg_game::main::GameInfo;
-    use rpg_game::utils::{id };
+    use basic_package::main::GameInfo;
+    use basic_package::utils::{id };
     // use rpg_game::monster::Boar;
 
 
