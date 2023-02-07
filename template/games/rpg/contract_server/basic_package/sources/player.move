@@ -12,6 +12,7 @@ module basic_package::player {
         id: UID,
         /// An ID of the game user is playing
         game_id: ID,
+        name:vector<u8>,
         /// Player attribute
         attribute:Attribute,
         /// Equipment
@@ -113,6 +114,7 @@ module basic_package::player {
         Player {
             id: object::new(ctx),
             game_id: id(game),
+            name:b"",
             attribute:Attribute{
                 level:0,
                 experience:0,
