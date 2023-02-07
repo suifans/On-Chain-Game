@@ -1,5 +1,5 @@
 module basic_package::main {
-    use sui::object::{Self, ID, UID};
+    use sui::object::{Self, UID};
     use sui::transfer;
     use sui::tx_context::{Self, TxContext};
 
@@ -15,8 +15,6 @@ module basic_package::main {
     /// Capability conveying the authority to create boars and potions
     struct GameAdmin has key {
         id: UID,
-        /// ID of the game where current user is an admin
-        game_id: ID,
     }
 
     /// On module publish, sender creates a new game. But once it is published,
@@ -29,7 +27,6 @@ module basic_package::main {
     fun create(ctx: &mut TxContext) {
         let sender = tx_context::sender(ctx);
         let id = object::new(ctx);
-        let game_id = object::uid_to_inner(&id);
 
         transfer::freeze_object(GameInfo {
             id,
@@ -38,7 +35,6 @@ module basic_package::main {
 
         transfer::transfer(
             GameAdmin {
-                game_id,
                 id: object::new(ctx),
             },
             sender

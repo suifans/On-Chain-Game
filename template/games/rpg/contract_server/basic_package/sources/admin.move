@@ -4,9 +4,9 @@ module basic_package::admin {
     // use rpg_game::main::{GameInfo, GameAdmin};
     // use sui::tx_context::TxContext;
     // use rpg_game::utils::check_id;
-
-
-
+    //
+    //
+    //
 
 
     // / Admin can create a boar with the given attributes for `recipient`

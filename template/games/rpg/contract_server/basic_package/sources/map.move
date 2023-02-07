@@ -32,13 +32,11 @@ module basic_package::map {
     }
 
     public entry fun add_map_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
-        // let new;
-        // let map_info = map.map_info;
-
         let vec_map_monster_setting = vec_map::get_mut(&mut map.map_info,&MapDetails{name, types});
         vector::push_back(vec_map_monster_setting, MapMonsterSetting{monster_name, monster_number});
         vec_map::insert(&mut map.map_info, MapDetails{name, types},*vec_map_monster_setting);
     }
+
 
     // public fun set_map_info(map:Map,map_details:MapDetails,map_monster_setting:MapMonsterSetting,ctx:&mut TxContext){
     //     let vec = vec_map::get_mut(&mut map.map_info,&map_details);
