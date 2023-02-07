@@ -1,17 +1,15 @@
-// module basic_package::drop {
+module basic_package::drop {
     // use sui::coin::{Self, Coin};
-    // use sui::event;
     // use sui::object::{Self, ID, UID};
-    // use sui::math;
-    // use sui::sui::SUI;
     // use sui::transfer;
     // use sui::tx_context::{Self, TxContext};
     // use std::option::{Self, Option};
-    //
-    // // --- Object creation ---
-    // /// It all starts with the sword. Anyone can buy a sword, and proceeds go
-    // /// to the admin. Amount of magic in the sword depends on how much you pay
-    // /// for it.
+
+
+    // --- Object creation ---
+    /// It all starts with the sword. Anyone can buy a sword, and proceeds go
+    /// to the admin. Amount of magic in the sword depends on how much you pay
+    /// for it.
     // public fun create_sword(
     //     game: &GameInfo,
     //     payment: Coin<SUI>,
@@ -33,4 +31,21 @@
     //         game_id: id(game)
     //     }
     // }
-// }
+
+
+    struct RANDOMNESS_WITNESS has drop {}
+
+    #[test]
+    public fun test_random(){
+        use std::debug::print;
+        use sui::randomness;
+        use sui::tx_context;
+        use sui::transfer;
+
+
+        let ctx = tx_context::dummy();
+        let random = randomness::new(RANDOMNESS_WITNESS {}, &mut ctx);
+        print(&random);
+        transfer::transfer(random, @sui);
+    }
+}

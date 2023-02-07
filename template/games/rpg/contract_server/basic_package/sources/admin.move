@@ -1,6 +1,6 @@
 module basic_package::admin {
-    use sui::object::{ ID, UID};
-    use basic_package::monster::Monster;
+    // use sui::object::{ ID, UID};
+    // use basic_package::monster::Monster;
     // use rpg_game::main::{GameInfo, GameAdmin};
     // use sui::tx_context::TxContext;
     // use rpg_game::utils::check_id;
@@ -27,6 +27,6 @@ module basic_package::admin {
         //     Boar { id: object::new(ctx), hp, strength, game_id: id(game) },
         //     map_address
         // )
-    }
+    // }
 
 }
