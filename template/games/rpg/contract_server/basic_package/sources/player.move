@@ -4,9 +4,6 @@ module basic_package::player {
     use std::option::{Self, Option};
     use basic_package::main::GameInfo;
     use basic_package::utils::{id };
-    // use rpg_game::monster::Boar;
-
-
 
     struct Player has key {
         id: UID,
@@ -108,7 +105,7 @@ module basic_package::player {
 
     /// Anyone can create a hero if they have a sword. All heroes start with the
     /// same attributes.
-    public fun create_warrior(
+    public fun create_player(
         game: &GameInfo, ctx: &mut TxContext
     ): Player {
         Player {

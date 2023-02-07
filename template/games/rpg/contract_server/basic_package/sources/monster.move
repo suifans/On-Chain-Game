@@ -56,4 +56,5 @@ module basic_package::monster {
         transfer::transfer(monster_info,sender(ctx))
     }
 
+
 }
