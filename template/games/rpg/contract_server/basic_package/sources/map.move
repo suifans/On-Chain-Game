@@ -12,12 +12,12 @@ module basic_package::map {
         map_info:VecMap<MapDetails,vector<MapMonsterSetting>>
     }
 
-    struct MapDetails has store, copy, drop {
+    struct MapDetails has copy, store, drop {
         name: vector<u8>,
         types: bool
     }
 
-    struct MapMonsterSetting has copy, store {
+    struct MapMonsterSetting has store, copy {
         monster_name:vector<u8>,
         monster_number:u8
     }
@@ -31,17 +31,14 @@ module basic_package::map {
         transfer::transfer(map,sender(ctx));
     }
 
-    public entry fun add_map_and_monster(map:&mut Map,map_details:MapDetails,map_monster_setting:MapMonsterSetting,ctx:&mut TxContext){
+    public entry fun add_map_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
         // let new;
         // let map_info = map.map_info;
-        let vec_map_monster_setting = vec_map::get_mut(&mut map.map_info,&map_details);
-        vector::push_back(vec_map_monster_setting,map_monster_setting);
-        vec_map::insert(&mut map.map_info,map_details,*vec_map_monster_setting);
-        // map.map_info = vec_map::get(&map.map_info,&map_details);
-        // vec_map::insert(&mut map.map_info,map_details,vector::empty<MapMonsterSetting>());
+
+        let vec_map_monster_setting = vec_map::get_mut(&mut map.map_info,&MapDetails{name, types});
+        vector::push_back(vec_map_monster_setting, MapMonsterSetting{monster_name, monster_number});
+        vec_map::insert(&mut map.map_info, MapDetails{name, types},*vec_map_monster_setting);
     }
-
-
 
     // public fun set_map_info(map:Map,map_details:MapDetails,map_monster_setting:MapMonsterSetting,ctx:&mut TxContext){
     //     let vec = vec_map::get_mut(&mut map.map_info,&map_details);
