@@ -95,7 +95,7 @@ const SelectRoleList = () =>{
                                                             <div className="text-sm ml-1 text-left">
                                                                 {/*<div  className="text-black text-left">{truncateMiddle(wallet?.address, 4)}</div>*/}
                                                                 <div>
-                                                                    Balance: {ethos.formatBalance(item?.extraFields?.balance.toString())}
+                                                                    Balance: {ethos.formatBalance(item?.extraFields?.balance)}
                                                                 </div>
                                                                 <div>
                                                                     {ethos.truncateMiddle(item?.objectId, 4)}
