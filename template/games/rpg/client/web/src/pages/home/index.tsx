@@ -28,13 +28,13 @@ const Home = () =>{
            }
         }
         push()
-    },[status,wallet])
+        // },[router.isReady])
+    },[wallet?.address])
         return (
             <>
                 <Pop_up_box/>
                 <div className="flex items-center justify-end mx-auto mt-5 max-w-7xl">
                     <ethos.components.AddressWidget />
-
                 </div>
 
                 <SelectRoleList/>

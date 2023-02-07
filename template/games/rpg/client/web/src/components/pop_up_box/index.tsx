@@ -2,19 +2,21 @@ import {CheckCircleIcon, XCircleIcon, XMarkIcon} from '@heroicons/react/20/solid
 import {useAtom} from "jotai";
 import {SellPop_up_boxState, SellState} from "../../jotai";
 import {useEffect} from "react";
+import {useRouter} from "next/router";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 export default function Pop_up_box() {
+    const router = useRouter()
     const [sellPop_up_boxState,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
     const [sellState,setSellState] =useAtom(SellState)
     useEffect(()=>{
         setTimeout(function() {
             setSellPop_up_boxState(false)
         },3000)
-    },[])
+    },[router.isReady])
     return (
         <div className={sellPop_up_boxState?"flex  fixed z-20 inset-x-0 justify-center":"hidden"}>
         <div className={classNames(sellState?"bg-green-50":"bg-red-50","rounded-md  p-4 ")}>
