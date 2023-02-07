@@ -1,11 +1,7 @@
 module basic_package::map {
     use sui::vec_map::VecMap;
     use sui::object::UID;
-    // use rpg_game::main::{GameInfo, GameAdmin};
-    // use sui::vec_map;
-    // use sui::table::Table;
     use sui::table_vec::TableVec;
-    // use std::vector;
 
     struct Map has key {
         id:UID,
@@ -21,19 +17,6 @@ module basic_package::map {
         monster_name:vector<u8>,
         monster_number:u8
     }
-
-
-    // public fun create_monster (
-    //     // game: &GameInfo,
-    //     // admin: &mut GameAdmin,
-    //     map:Map,
-    //     map_details:MapDetails,
-    //     map_monster_setting:MapMonsterSetting
-    // ) {
-    //     let monster_setting = vec_map::get(&mut map.map_info,&map_details);
-    //     monster_setting.monster_number = monster_setting.monster_number + map_monster_setting.monster_number
-    //
-    // }
 
 
     #[test]

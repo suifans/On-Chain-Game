@@ -1,10 +1,8 @@
 module basic_package::main {
     use sui::object::{Self, ID, UID};
     use sui::transfer;
-    // use sui::address;
     use sui::tx_context::{Self, TxContext};
-    // use rpg_game::utils::{check_id, create_address};
-    // use rpg_game::map;
+
 
     /// An immutable object that contains information about the
     /// game admin. Created only once in the module initializer,
@@ -46,22 +44,4 @@ module basic_package::main {
             sender
         )
     }
-
-    // / Admin can create a boar with the given attributes for `recipient`
-    // public entry fun send_boar(
-    //     game: &GameInfo,
-    //     admin: &mut GameAdmin,
-    //     hp: u64,
-    //     strength: u64,
-    //     map_name:vector<u8>,
-    //     ctx: &mut TxContext
-    // ) {
-    //     check_id(game, admin.game_id);
-    //     // send boars to the designated player
-    //     let map_address = create_address(map_name);
-    //     // transfer::transfer(
-    //     //     Boar { id: object::new(ctx), hp, strength, game_id: id(game) },
-    //     //     map_address
-    //     // )
-    // }
 }
