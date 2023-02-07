@@ -20,7 +20,7 @@ const SelectRoleList = () =>{
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
     const [,setOpenLoading] =useAtom(LoadingState)
     useEffect(() => {
-        if (!wallet) return
+
         // console.log(ethos.truncateMiddle(wallet?.address, 6))
         // for (let tokenName in wallet?.contents?.tokens) {
         //     let token = wallet?.contents?.tokens[tokenName];
@@ -28,7 +28,7 @@ const SelectRoleList = () =>{
         // }
         setRoleList(wallet?.contents?.objects)
         console.log("1111",wallet?.contents?.objects)
-    }, [wallet])
+    }, [wallet?.address])
 
     const selectRole = () =>{
         setRoleDetails({name:"无上老祖",hp:"100",ex:"100",lv:"1",weapons:"红色宝剑"})
