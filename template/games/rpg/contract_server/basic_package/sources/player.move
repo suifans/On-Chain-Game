@@ -8,11 +8,11 @@ module basic_package::player {
 
 
 
-    struct Warrior has key {
+    struct Player has key {
         id: UID,
         /// An ID of the game user is playing
         game_id: ID,
-        /// Warrior attribute
+        /// Player attribute
         attribute:Attribute,
         /// Equipment
         equipment_slot:Equipment_Slot,
@@ -24,15 +24,20 @@ module basic_package::player {
         experience: u64,
         /// Hit points. If they go to zero, the player will die and don't to do anything
         hp:u64,
+        attack_lower_limit:u64,
+        attack_upper_limit:u64,
+        defense_lower_limit:u64,
+        defense_upper_limit:u64,
+        gold:u64
     }
 
     /// The hero's trusty sword
-    struct Sword has key, store {
+    struct Weapon has key, store {
         id: UID,
         /// Constant set at creation. Acts as a multiplier on sword's strength.
-        /// Swords with high magic are rarer (because they cost more).
+        /// Weapons with high magic are rarer (because they cost more).
         magic: u64,
-        /// Sword grows in strength as we use it
+        /// Weapon grows in strength as we use it
         strength: u64,
         /// An ID of the game
         game_id: ID,
@@ -40,14 +45,14 @@ module basic_package::player {
 
     struct Equipment_Slot has store{
         /// The hero's minimal inventory
-        sword: Option<Sword>,
+        sword: Option<Weapon>,
     }
 
     // --- Gameplay ---
     /// Slay the `boar` with the `hero`'s sword, get experience.
     /// Aborts if the hero has 0 HP or is not strong enough to slay the boar
     // public entry fun slay(
-    //     game: &GameInfo, warrior: &mut Warrior, boar: Boar, ctx: &TxContext
+    //     game: &GameInfo, warrior: &mut Player, boar: Boar, ctx: &TxContext
     // ) {
     //     check_id(game, warrior.game_id);
     //     check_id(game, boar.game_id);
@@ -85,15 +90,15 @@ module basic_package::player {
 
     /// Add `new_sword` to the hero's inventory and return the old sword
     /// (if any)
-    public fun equip_sword(warrior: &mut Warrior, new_sword: Sword): Option<Sword> {
+    public fun equip_sword(warrior: &mut Player, new_weapon: Weapon): Option<Weapon> {
         if (option::is_some(&warrior.equipment_slot.sword)) {
 
         };
-        option::swap_or_fill(&mut warrior.equipment_slot.sword,new_sword)
+        option::swap_or_fill(&mut warrior.equipment_slot.sword,new_weapon)
     }
 
     const ENO_SWORD: u64 = 4;
-    public fun remove_sword(warrior: &mut Warrior): Sword {
+    public fun remove_sword(warrior: &mut Player): Weapon {
         assert!(option::is_some(&warrior.equipment_slot.sword), ENO_SWORD);
         option::extract(&mut warrior.equipment_slot.sword)
     }
@@ -104,14 +109,19 @@ module basic_package::player {
     /// same attributes.
     public fun create_warrior(
         game: &GameInfo, ctx: &mut TxContext
-    ): Warrior {
-        Warrior {
+    ): Player {
+        Player {
             id: object::new(ctx),
             game_id: id(game),
             attribute:Attribute{
                 level:0,
                 experience:0,
-                hp:0
+                hp:0,
+                attack_lower_limit:0,
+                attack_upper_limit:0,
+                defense_lower_limit:0,
+                defense_upper_limit:0,
+                gold:0
             },
             equipment_slot:Equipment_Slot{
                 sword:option::none()
