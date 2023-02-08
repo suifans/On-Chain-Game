@@ -1,7 +1,6 @@
 module basic_package::monster {
-    use sui::object::{UID, ID};
+    use sui::object::{UID };
     use sui::vec_map::VecMap;
-    use std::vector;
     use sui::object;
     use sui::transfer;
     use sui::tx_context::{sender, TxContext};
@@ -59,16 +58,10 @@ module basic_package::monster {
         )
     }
 
-    // public fun create_and_add_monster_info(monster_info:MonsterInfo,monster:Monster,ctx:&mut TxContext){
-    //     let new_monster_info = MonsterInfo{
-    //         id:object::new(ctx),
-    //         monster:vector::empty<Monster>()
-    //     };
-    //     transfer::transfer(new_monster_info,sender(ctx));
-    //     let before_monster_info = monster_info.monster;
-    //     vector::push_back(&mut before_monster_info,monster);
-    //     transfer::transfer(monster_info,sender(ctx))
-    // }
+    public entry fun set_monster_drop_info (monster_info:&mut MonsterInfo,monster_name:vector<u8>,items_name:vector<u8>,items_number:u64){
+       let monster = vec_map::get_mut(&mut monster_info.monster,&monster_name);
+        vec_map::insert(&mut monster.drop_config.items,items_name,items_number)
+    }
 
 
 }

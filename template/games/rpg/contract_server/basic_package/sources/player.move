@@ -27,16 +27,21 @@ module basic_package::player {
     /// The hero's trusty sword
     struct Weapon has key, store {
         id: UID,
-        /// Constant set at creation. Acts as a multiplier on sword's strength.
-        /// Weapons with high magic are rarer (because they cost more).
-        magic: u64,
-        /// Weapon grows in strength as we use it
-        strength: u64,
+        attack_lower_limit:u64,
+        attack_upper_limit:u64,
     }
+
+    struct Clothing has key, store {
+        id: UID,
+        defense_lower_limit:u64,
+        defense_upper_limit:u64,
+    }
+
 
     struct Equipment_Slot has store{
         /// The hero's minimal inventory
-        sword: Option<Weapon>,
+        weapon: Option<Weapon>,
+        clothing: Option<Clothing>,
     }
 
     // --- Gameplay ---
@@ -114,7 +119,8 @@ module basic_package::player {
                 gold:0
             },
             equipment_slot:Equipment_Slot{
-                sword:option::none()
+                weapon:option::none(),
+                clothing:option::none(),
             },
         };
         transfer::transfer(player,sender(ctx))

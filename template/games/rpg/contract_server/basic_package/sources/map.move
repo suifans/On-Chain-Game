@@ -23,7 +23,7 @@ module basic_package::map {
     }
 
 
-    public entry fun create_map_info(ctx:&mut TxContext){
+    public entry fun create_map(ctx:&mut TxContext){
         let map = Map{
             id:object::new(ctx),
             map_info:vec_map::empty<MapDetails,vector<MapMonsterSetting>>()
@@ -31,25 +31,20 @@ module basic_package::map {
         transfer::transfer(map,sender(ctx));
     }
 
-    public entry fun add_map_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
+    public entry fun add_mapinfo_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
         let vec_map_monster_setting = vec_map::get_mut(&mut map.map_info,&MapDetails{name, types});
         vector::push_back(vec_map_monster_setting, MapMonsterSetting{monster_name, monster_number});
         vec_map::insert(&mut map.map_info, MapDetails{name, types},*vec_map_monster_setting);
     }
 
 
-    // public fun set_map_info(map:Map,map_details:MapDetails,map_monster_setting:MapMonsterSetting,ctx:&mut TxContext){
-    //     let vec = vec_map::get_mut(&mut map.map_info,&map_details);
-    //     vector::push_back(vec,map_monster_setting);
-    //     transfer::transfer(map,sender(ctx));
-    // }
-
-
-    // public fun query_map_info(map:&Map,map_details:MapDetails) : vector<MapMonsterSetting>{
-    //     let vec_map_monster_setting = vec_map::get(&map.map_info,&map_details);
-    //     *vec_map_monster_setting
-    // }
-
+    public entry fun set_map_moster_setting(map:&mut Map,name: vector<u8>, types: bool,monster_name:vector<u8>,monster_number:u8){
+        let vec = vec_map::get_mut(&mut map.map_info,&MapDetails{name,types});
+        vector::push_back(vec,MapMonsterSetting {
+            monster_name,
+            monster_number
+        });
+    }
 
     // #[test]
     // public fun test_map(){
