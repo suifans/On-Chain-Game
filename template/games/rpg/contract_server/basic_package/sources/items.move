@@ -10,7 +10,7 @@ module basic_package::items {
         items:VecMap<vector<u8>,Items>
     }
 
-    struct Items has store,copy,drop {
+    struct Items has key,store,copy,drop {
         attack_lower_limit:u64,
         attack_upper_limit:u64,
         defense_lower_limit:u64,
@@ -44,6 +44,7 @@ module basic_package::items {
             }
         )
     }
+
 
 
 }
