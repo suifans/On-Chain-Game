@@ -1,50 +1,127 @@
 import {useAtom} from "jotai";
-import {LoadingState, RoleDetails, Select_RoleList} from "../../jotai";
+import {LoadingState, RoleDetails, Select_RoleList, SellPop_up_boxState, SellState} from "../../jotai";
 import {Dialog, Transition} from "@headlessui/react";
-import React, {Fragment, useEffect,useState} from "react";
+import React, {Fragment, useCallback, useEffect, useState} from "react";
 import {ethos} from "ethos-connect";
+import {JsonRpcProvider} from "@mysten/sui.js";
 
 
 const SelectRoleList = () =>{
     const [selectRoleList,setSelectRoleList] = useAtom(Select_RoleList)
     const { status, wallet } = ethos.useWallet();
+    const [sellState,setSellState] =useAtom(SellState)
+    const [,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
 
-    const  roleList = [{
-        extraFields:{
-            balance:"",
-        },
-        objectId:"",
-
-    }]
+    const  roleList = [
+        {
+            id:"",
+            attack_lower_limit:"",
+            attack_upper_limit:"",
+            defense_lower_limit:"",
+            defense_upper_limit:"",
+            gold:"",
+            hp:"",
+            level:"",
+        }
+    ]
     const [RoleList,setRoleList] = useState(roleList)
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
-    const [,setOpenLoading] =useAtom(LoadingState)
+    const [openLoading,setOpenLoading] =useState(false)
     useEffect(() => {
+        let info = []
+        for (let i=0 ; i<wallet?.contents?.objects.length; i++){
+        if(wallet?.contents?.objects[i].details.data.type =="0xe8f243e780c5df0eb0b5cedf8e9fe44ccd2c5744::player::Player") {
 
+           let data = wallet?.contents?.objects[i].details.data.fields
+           console.log(data.id)
+           let result = {
+               id: data.id.id,
+               attack_lower_limit:data.attribute.fields.attack_lower_limit,
+               attack_upper_limit:data.attribute.fields.attack_upper_limit,
+               defense_lower_limit:data.attribute.fields.defense_lower_limit,
+               defense_upper_limit:data.attribute.fields.defense_upper_limit,
+               gold:data.attribute.fields.gold,
+               hp:data.attribute.fields.hp,
+               level:data.attribute.fields.level,
+           }
+           info.push(result)
+       }
+        }
         // console.log(ethos.truncateMiddle(wallet?.address, 6))
         // for (let tokenName in wallet?.contents?.tokens) {
         //     let token = wallet?.contents?.tokens[tokenName];
         //     console.log(tokenName,token.balance)
         // }
-        setRoleList(wallet?.contents?.objects)
-        console.log("1111",wallet?.contents?.objects)
+        setRoleList(info)
+        // console.log("1111",wallet?.contents?.objects)
     }, [wallet?.address])
 
-    const selectRole = () =>{
-        setRoleDetails({name:"无上老祖",hp:"100",ex:"100",lv:"1",weapons:"红色宝剑"})
+    const selectRole = (item) =>{
+        setRoleDetails(item)
         setSelectRoleList(false)
     }
 
-    const CreateRole = () =>{
-        setSelectRoleList(false)
-        setOpenLoading(true)
 
-        setTimeout(function() {
-            setRoleDetails({name:"无上老祖",hp:"100",ex:"100",lv:"1",weapons:"红色宝剑"})
-            setOpenLoading(false)
+    const contractAddress = "0xe8f243e780c5df0eb0b5cedf8e9fe44ccd2c5744"
+    const mint = useCallback(async () => {
+        if(!openLoading){
+         setOpenLoading(true)
+            if (!wallet) return
+            try {
+                const signableTransaction = {
+                    kind: 'moveCall' as const,
+                    data: {
+                        packageObjectId: contractAddress,
+                        module: 'player',
+                        function: 'create_player',
+                        typeArguments: [],
+                        arguments: [],
+                        gasBudget: 30000,
+                    },
+                }
+                const result = await wallet.signAndExecuteTransaction(signableTransaction)
+                // @ts-ignore
+                const tx_status = result.effects.status.status;
+                // @ts-ignore
+                const objectId = result.effects.events[1].newObject.objectId
+                if(tx_status == "success"){
+                    const provider = new JsonRpcProvider();
+                    const result = await provider.getObject(
+                        objectId
+                    );
+                    // @ts-ignore
+                    const data = result.details.data.fields
+                    console.log(data)
+                    const CreateRole = {
+                        id: data.id.id,
+                        attack_lower_limit:data.attribute.fields.attack_lower_limit,
+                        attack_upper_limit:data.attribute.fields.attack_upper_limit,
+                        defense_lower_limit:data.attribute.fields.defense_lower_limit,
+                        defense_upper_limit:data.attribute.fields.defense_upper_limit,
+                        gold:data.attribute.fields.gold,
+                        hp:data.attribute.fields.hp,
+                        level:data.attribute.fields.level,
+                    }
+                    setRoleDetails(CreateRole)
+                    setOpenLoading(false)
+                    setSelectRoleList(false)
+                    setSellState({state:true,type:"创建"})
+                    setSellPop_up_boxState(true)
+                    setTimeout(function() {
+                        setSellPop_up_boxState(false)
+                    },3000)
+                }else {
+                    setOpenLoading(false)
+                    setSelectRoleList(false)
+                    setSellState({state:false,type:"创建"})
+                    setSellPop_up_boxState(true)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
-        },3000)
-    }
+    }, [wallet])
 
     return(
         <>
@@ -87,18 +164,19 @@ const SelectRoleList = () =>{
                                     <div className="my-5 h-40 pr-4  scrollbar-thin scrollbar-thumb-custom  scrollbar-thumb-rounded-full overflow-y-scroll">
                                         <div className="flex grid md:grid-cols-2  gap-4">
                                             {RoleList?.map((item,index)=>(
-                                                <div  key={wallet?.name} className="rounded-full ">
-                                                    <button onClick={selectRole}  className="flex ">
+                                                <div  key={item.id} className={"rounded-full "}>
+                                                    <button onClick={()=>selectRole(item)}  className="flex ">
                                                         <div id={wallet?.name} className="flex items-center">
                                                             <div>{index+1}</div>
-                                                            <img  className="w-10 mr-1 rounded-full" src={wallet?.icon} alt=""/>
+                                                            <img  className="w-10 mx-2 rounded-full" src={wallet?.icon} alt=""/>
                                                             <div className="text-sm ml-1 text-left">
                                                                 {/*<div  className="text-black text-left">{truncateMiddle(wallet?.address, 4)}</div>*/}
                                                                 <div>
-                                                                    Balance: {ethos.formatBalance(item?.extraFields?.balance)}
+                                                                    {/*ethos.formatBalance*/}
+                                                                    金币: {item.gold}
                                                                 </div>
                                                                 <div>
-                                                                    {ethos.truncateMiddle(item?.objectId, 4)}
+                                                                    {ethos.truncateMiddle(item.id, 5)}
                                                                 </div>
                                                                 {/*<div  className="text-gray-400">$ {item}</div>*/}
                                                             </div>
@@ -108,10 +186,14 @@ const SelectRoleList = () =>{
                                                 ))}
                                         </div>
                                     </div>
-                                    <div className="flex justify-center py-4">
-                                        <button onClick={CreateRole} className="bg-black rounded-md  px-4 py-1.5 text-white text-sm">
-                                            创建新的角色
-                                        </button>
+                                    <div className="flex justify-center py-4 ">
+                                            <button onClick={mint} className="bg-black rounded-md  px-4 py-1.5 text-white text-sm">
+
+                                                <div className={openLoading?"hidden":""}>创建新的角色</div>
+                                                <div className={openLoading?"animate-spin text-white":"hidden"}>
+                                                    <i className="fa fa-spinner f-spin fa-2x fa-fw"></i>
+                                                </div>
+                                            </button>
 
                                     </div>
                                 </div>
