@@ -14,6 +14,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mysten/sui.js": "^0.26.1",
     "ethos-connect": "^0.0.93",
     "jotai": "^1.10.0",
     "next": "^13.0.5",

@@ -24,7 +24,16 @@ const Home = () =>{
                setLogin(true)
            }else {
                setLogin(false)
-               setRoleDetails({name:"",hp:"",ex:"",lv:"",weapons:""})
+               setRoleDetails({
+                   id:"",
+                   attack_lower_limit:"",
+                   attack_upper_limit:"",
+                   defense_lower_limit:"",
+                   defense_upper_limit:"",
+                   gold:"",
+                   hp:"",
+                   level:"",
+               })
            }
         }
         push()
