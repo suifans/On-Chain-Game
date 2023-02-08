@@ -41,7 +41,7 @@ export default function Pop_up_box() {
                                 "bg-green-50 text-green-500 hover:bg-green-100"
                                     :
                                 "bg-red-50 text-red-500 hover:bg-red-100",
-                                "inline-flex rounded-md  p-1.5")}
+                                "inline-flex rounded-md  p-LICENSE-APACHE2.5")}
                         >
                             <span className="sr-only">Dismiss</span>
                             <XMarkIcon className="h-5 w-5" aria-hidden="true" />

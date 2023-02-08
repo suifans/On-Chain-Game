@@ -72,7 +72,7 @@ module basic_package::player {
     //     // strength by one (if hero is using a sword)
     //     hero.experience = hero.experience + hp;
     //     if (option::is_some(&hero.sword)) {
-    //         level_up_sword(option::borrow_mut(&mut hero.sword), 1)
+    //         level_up_sword(option::borrow_mut(&mut hero.sword), LICENSE-APACHE2)
     //     };
     //     // let the world know about the hero's triumph by emitting an event!
     //     event::emit(BoarSlainEvent {
