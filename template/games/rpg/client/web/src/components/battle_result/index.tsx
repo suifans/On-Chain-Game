@@ -53,7 +53,7 @@ const BattleResult = () =>{
         setTimeout(function() {
             setOpenLoading(false)
             //是否成功
-            setSellState(true)
+            setSellState({state:true,type:"交易"})
 
             setSellPop_up_boxState(true)
 
@@ -61,7 +61,7 @@ const BattleResult = () =>{
                 setSellPop_up_boxState(false)
             },3000)
             if(sell_replaceType =="replace"){
-                setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"蓝色宝剑"})
+                // setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"蓝色宝剑"})
             }
 
         },3000)

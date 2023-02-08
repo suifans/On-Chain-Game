@@ -13,6 +13,7 @@ import {ChevronUpIcon} from "@heroicons/react/20/solid";
 import {useEffect} from "react";
 import Loading from "../loading";
 import BattleResult from "../battle_result";
+import {ethos} from "ethos-connect";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -35,26 +36,35 @@ const RoleDetail = () =>{
                     ....
                 </div>
                 <button onClick={selectRole} className={login?"":"hidden"}>
-                    {roleDetails.name ==""?"选择角色":"切换角色"}
+                    {roleDetails.id ===""?"选择角色":"切换角色"}
                 </button>
-                <div className={roleDetails.name ==""?"hidden":"flex justify-between  w-full  mt-10"}>
+                <div className={roleDetails.id ==""?"hidden":"flex justify-between  w-full  mt-10"}>
 
                 <div>
                     <div >
                         <div>
-                            名字 :{roleDetails.name}
+                            ID :  {ethos.truncateMiddle(roleDetails.id, 5)}
                         </div>
                         <div>
-                            等级 :{roleDetails.lv}
+                            金币 :  {roleDetails.gold}
                         </div>
                         <div>
-                            血量 :{roleDetails.hp}
+                            等级 : {roleDetails.level}
                         </div>
                         <div>
-                            攻击 :{roleDetails.ex}
+                            血量 : {roleDetails.hp}
                         </div>
                         <div>
-                            武器 :{roleDetails.weapons}
+                            攻击上限 : {roleDetails.attack_upper_limit}
+                        </div>
+                        <div>
+                            攻击下限 : {roleDetails.attack_lower_limit}
+                        </div>
+                        <div>
+                            防御上限 : {roleDetails.defense_upper_limit}
+                        </div>
+                        <div>
+                            防御下限 : {roleDetails.defense_lower_limit}
                         </div>
                     </div>
                 </div>
@@ -105,7 +115,7 @@ const MonsterDetail = () =>{
             setBattleResultDetail({state: true})
             setOpenLoading(false)
             setSelectBattleResultState(true)
-            setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"红色宝剑"})
+            // setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"红色宝剑"})
         },3000)
     }
     return(

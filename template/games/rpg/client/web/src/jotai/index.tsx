@@ -12,14 +12,24 @@ const BattleResultState = atom(false)
 //交易弹出框
 const SellPop_up_boxState = atom(false)
 //交易是否成功
-const SellState = atom(false)
+const SellState = atom({state:false,type:""})
 //战斗是否成功
 const BattleResultDetail = atom(
     {
         state:false,
     })
 //更新角色信息
-const RoleDetails = atom({name:"",hp:"",ex:"",lv:"",weapons:""})
+const RoleDetails = atom(
+    {
+    id:"",
+    attack_lower_limit:"",
+    attack_upper_limit:"",
+    defense_lower_limit:"",
+    defense_upper_limit:"",
+    gold:"",
+    hp:"",
+    level:"",
+})
 //更新怪物信息
 const MonsterDetails = atom([{
     title:"",
