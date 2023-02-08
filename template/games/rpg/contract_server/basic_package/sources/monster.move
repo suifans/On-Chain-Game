@@ -12,7 +12,7 @@ module basic_package::monster {
         monster:VecMap<vector<u8>,Monster>
     }
 
-     struct Monster has store,copy,drop {
+     struct Monster has key,store,copy,drop {
         hp: u64,
         attack_lower_limit:u64,
         attack_upper_limit:u64,

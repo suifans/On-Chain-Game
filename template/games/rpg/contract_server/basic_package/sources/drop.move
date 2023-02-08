@@ -1,12 +1,10 @@
 module basic_package::drop {
-    // use sui::coin::{Self, Coin};
-    // use sui::object::{Self, ID, UID};
-    // use sui::transfer;
-    // use sui::tx_context::{Self, TxContext};
-    // use std::option::{Self, Option};
     use sui::tx_context::{TxContext, sender};
     use sui::randomness;
     use sui::devnet_nft;
+    use basic_package::player::{Player, get_player};
+    use basic_package::monster::Monster;
+
 
 
 

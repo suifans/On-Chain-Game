@@ -126,4 +126,8 @@ module basic_package::player {
         transfer::transfer(player,sender(ctx))
     }
 
+    public fun get_player(player:&mut Player):&mut Player{
+        return player
+    }
+
 }
