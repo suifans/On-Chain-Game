@@ -51,7 +51,11 @@ const query_map_info = async  () =>{
         '0xc62f25b044a4069831d2ae317df9ffb04c40a3d2',
     );
     // @ts-ignore
-    console.log(txn.details.data.fields.map_info.fields.contents.fields)
+    // console.log(txn.details.data.fields)
+    // @ts-ignore
+    console.log(JSON.stringify(txn.details.data.fields.map_info.fields.contents))
+    // // @ts-ignore
+    // console.log(txn.details.data.fields.map_info.fields.contents.fields)
 }
 
 const main =  async () =>{
