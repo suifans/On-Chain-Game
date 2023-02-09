@@ -25,10 +25,34 @@ module basic_package::monster {
         items:VecMap<vector<u8>,u64>
     }
 
-    public entry fun create_monster_info(ctx:&mut TxContext){
+    public entry fun create_monster_info(
+        monster_name:vector<u8>,
+        hp: u64,
+        attack_lower_limit:u64,
+        attack_upper_limit:u64,
+        defense_lower_limit:u64,
+        defense_upper_limit:u64,
+        items_name:vector<u8>,
+        items_number:u64,
+        ctx:&mut TxContext
+    ){
+       let m = vec_map::empty<vector<u8>,Monster>();
+       let items =  vec_map::empty<vector<u8>,u64>();
+       vec_map::insert(&mut items,items_name,items_number);
+       vec_map::insert(&mut m,monster_name,Monster{
+            hp,
+            attack_lower_limit,
+            attack_upper_limit,
+            defense_lower_limit,
+            defense_upper_limit,
+            drop_config:DropConfig{
+                items
+            },
+       });
+
        let monster_info = MonsterInfo{
            id:object::new(ctx),
-           monster:vec_map::empty()
+           monster:m
        };
         transfer::transfer(monster_info,sender(ctx))
     }
@@ -41,7 +65,11 @@ module basic_package::monster {
         attack_upper_limit:u64,
         defense_lower_limit:u64,
         defense_upper_limit:u64,
+        items_name:vector<u8>,
+        items_number:u64,
     ){
+        let items =  vec_map::empty<vector<u8>,u64>();
+        vec_map::insert(&mut items,items_name,items_number);
         vec_map::insert(
             &mut monster_info.monster,
             monster_name,
@@ -52,16 +80,16 @@ module basic_package::monster {
                 defense_lower_limit,
                 defense_upper_limit,
                 drop_config:DropConfig{
-                    items:vec_map::empty()
+                    items
                 }
             }
         )
     }
 
-    public entry fun set_monster_drop_info (monster_info:&mut MonsterInfo,monster_name:vector<u8>,items_name:vector<u8>,items_number:u64){
-       let monster = vec_map::get_mut(&mut monster_info.monster,&monster_name);
-        vec_map::insert(&mut monster.drop_config.items,items_name,items_number)
-    }
+    // public entry fun set_monster_drop_info (monster_info:&mut MonsterInfo,monster_name:vector<u8>,items_name:vector<u8>,items_number:u64){
+    //    let monster = vec_map::get_mut(&mut monster_info.monster,&monster_name);
+    //     vec_map::insert(&mut monster.drop_config.items,items_name,items_number)
+    // }
 
 
 }
