@@ -33,9 +33,8 @@ module basic_package::map {
         transfer::transfer(map,sender(ctx));
     }
 
-    public entry fun add_map_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
+    public entry fun add_map_and_monster(map:&mut Map,monster_name: vector<u8>, monster_number: u8){
         let (mapdetail_k, mapmonster_v) = vec_map::pop(&mut map.map_info);
-
         vector::push_back(&mut mapmonster_v, MapMonsterSetting{monster_name, monster_number});
         vec_map::insert(&mut map.map_info, mapdetail_k, mapmonster_v);
     }
@@ -93,7 +92,7 @@ module basic_package::map {
             use sui::tx_context::sender;
             use sui::vec_map;
             use std::vector;
-            use std::debug::print;
+            use std::debug;
 
         let map_details = MapDetails {
             name: b"test",

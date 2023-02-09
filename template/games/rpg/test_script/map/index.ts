@@ -13,28 +13,29 @@ const key_pair_struct:ExportedKeypair = {
 const keypair = fromExportedKeypair(key_pair_struct)
 
 
-const create_map = async (signer:any) => {
+const create_map_info = async (signer:any) => {
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x57160d59d9194cddae32389186a8bb0acf14e561',
+        packageObjectId: '0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86',
         module: 'map',
-        function: 'create_map',
+        function: 'create_map_info',
         typeArguments: [],
-        arguments: [],
+        arguments: [
+            "biqi",
+            true
+        ],
         gasBudget: 10000,
     });
     console.log(moveCallTxn);
 }
 
-const add_mapinfo_and_monster = async (signer:any) =>{
+const add_map_and_monster = async (signer:any) =>{
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x57160d59d9194cddae32389186a8bb0acf14e561',
+        packageObjectId: '0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86',
         module: 'map',
-        function: 'add_mapinfo_and_monster',
+        function: 'add_map_and_monster',
         typeArguments: [],
         arguments: [
-            "0xdd6dc74e6a8353b74949a04e4a7a700cd0e91523",
-            "city",
-            true,
+            "0xc62f25b044a4069831d2ae317df9ffb04c40a3d2",
             "chicken",
             10
         ],
@@ -44,10 +45,20 @@ const add_mapinfo_and_monster = async (signer:any) =>{
 }
 
 
+const query_map_info = async  () =>{
+    const provider = new JsonRpcProvider();
+    const txn = await provider.getObject(
+        '0xc62f25b044a4069831d2ae317df9ffb04c40a3d2',
+    );
+    // @ts-ignore
+    console.log(txn.details.data.fields.map_info.fields.contents.fields)
+}
+
 const main =  async () =>{
     const signer = new RawSigner(keypair, provider);
-    // await create_map(signer)
-    await add_mapinfo_and_monster(signer)
+    // await create_map_info(signer)
+    // await add_map_and_monster(signer)
+    await query_map_info()
 }
 
 main();
