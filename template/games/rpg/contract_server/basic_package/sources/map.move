@@ -2,11 +2,9 @@ module basic_package::map {
     use sui::vec_map::{Self, VecMap};
     use sui::object::UID;
     use std::vector;
-    use std::string::{String};
     use sui::transfer;
     use sui::tx_context::{sender, TxContext};
     use sui::object;
-    use std::string;
 
     struct Map has key {
         id: UID,
@@ -23,9 +21,9 @@ module basic_package::map {
         monster_number: u8
     }
 
-    public entry fun create_map_info(name: vector<u8>, types: bool,ctx: &mut TxContext){
+    public entry fun create_map_info(name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8,ctx: &mut TxContext){
         let m = vec_map::empty<MapDetails, vector<MapMonsterSetting>>();
-        vec_map::insert(&mut m, MapDetails{name, types}, vector[MapMonsterSetting{monster_name: b"hello",monster_number: 0}]);
+        vec_map::insert(&mut m, MapDetails{name, types}, vector[MapMonsterSetting{monster_name: monster_name,monster_number: monster_number}]);
         let map = Map{
             id: object::new(ctx),
             map_info: m
@@ -33,10 +31,14 @@ module basic_package::map {
         transfer::transfer(map,sender(ctx));
     }
 
-    public entry fun add_map_and_monster(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
+    public entry fun add_monster_on_mapdetail(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
         let (mapdetail_k, mapmonster_v) = vec_map::remove(&mut map.map_info, &MapDetails{name, types});
         vector::push_back(&mut mapmonster_v , MapMonsterSetting{monster_name, monster_number});
         vec_map::insert(&mut map.map_info, mapdetail_k, mapmonster_v);
+    }
+
+    public entry fun new_mapdetail(map: &mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8) {
+        vec_map::insert(&mut map.map_info, MapDetails{name, types}, vector[MapMonsterSetting{monster_name, monster_number}]);
     }
 
     //

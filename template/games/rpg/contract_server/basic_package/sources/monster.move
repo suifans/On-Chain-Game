@@ -85,11 +85,4 @@ module basic_package::monster {
             }
         )
     }
-
-    // public entry fun set_monster_drop_info (monster_info:&mut MonsterInfo,monster_name:vector<u8>,items_name:vector<u8>,items_number:u64){
-    //    let monster = vec_map::get_mut(&mut monster_info.monster,&monster_name);
-    //     vec_map::insert(&mut monster.drop_config.items,items_name,items_number)
-    // }
-
-
 }

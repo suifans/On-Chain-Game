@@ -1,7 +1,7 @@
 module basic_package::items {
     use sui::object::{Self, UID};
     use sui::transfer;
-    use sui::tx_context::{Self, TxContext, sender};
+    use sui::tx_context::{TxContext, sender};
     use sui::vec_map::VecMap;
     use sui::vec_map;
 

@@ -2,8 +2,6 @@ module basic_package::drop {
     use sui::tx_context::{TxContext, sender};
     use sui::randomness;
     use sui::devnet_nft;
-    use basic_package::player::{Player, get_player};
-    use basic_package::monster::Monster;
 
     struct RANDOMNESS_WITNESS has drop {}
 
