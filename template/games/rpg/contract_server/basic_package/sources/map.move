@@ -92,7 +92,7 @@ module basic_package::map {
             use sui::tx_context::sender;
             use sui::vec_map;
             use std::vector;
-            use std::debug::print;
+            use std::debug;
 
         let map_details = MapDetails {
             name: b"test",
