@@ -1,7 +1,9 @@
 import {Ed25519Keypair, JsonRpcProvider, RawSigner, TypeTag} from '@mysten/sui.js';
 import {fromExportedKeypair} from "@mysten/sui.js";
 import {ExportedKeypair} from "@mysten/sui.js/src/cryptography/keypair";
+const  _ = require('lodash');
 const { execSync } = require('child_process');
+
 
 const provider = new JsonRpcProvider();
 const schema = new Ed25519Keypair().getKeyScheme();
@@ -44,6 +46,13 @@ const add_map_and_monster = async (signer:any) =>{
     console.log(moveCallTxn);
 }
 
+function Uint8ArrayToString(fileData:any){
+    let dataString = "";
+    for (let i = 0; i < fileData.length; i++) {
+        dataString += String.fromCharCode(fileData[i]);
+    }
+    return dataString
+}
 
 const query_map_info = async  () =>{
     const provider = new JsonRpcProvider();
@@ -52,8 +61,25 @@ const query_map_info = async  () =>{
     );
     // @ts-ignore
     // console.log(txn.details.data.fields)
+
     // @ts-ignore
-    console.log(JSON.stringify(txn.details.data.fields.map_info.fields.contents))
+
+    const a = txn.details.data.fields.map_info.fields.contents[0].fields.key.fields.name
+    // @ts-ignore
+
+
+    // console.log(txn.details.data.fields.map_info.fields.contents[0].fields.key.fields.name)
+    // // @ts-ignore
+    // console.log(txn.details.data.fields.map_info.fields.contents[0].fields.value[0].fields)
+    // @ts-ignore
+    // let a = Object.getOwnPropertyNames(txn.details.data.fields.map_info.fields.contents)
+    // console.log(a)
+
+    // @ts-ignore
+    // const {key,value} = JSON.stringify(txn.details.data.fields.map_info.fields.contents.fields)
+    // console.log(JSON.stringify(txn.details.data.fields.map_info.fields.contents))
+    // @ts-ignore
+    // console.log(JSON.stringify(txn.details.data.fields.map_info.fields.contents))
     // // @ts-ignore
     // console.log(txn.details.data.fields.map_info.fields.contents.fields)
 }
