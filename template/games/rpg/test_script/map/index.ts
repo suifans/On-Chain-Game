@@ -17,7 +17,7 @@ const keypair = fromExportedKeypair(key_pair_struct)
 
 const create_map_info = async (signer:any) => {
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86',
+        packageObjectId: '0x06fc60ac485d6ae9f669e7339c71c99b4ebf3675',
         module: 'map',
         function: 'create_map_info',
         typeArguments: [],
@@ -32,12 +32,12 @@ const create_map_info = async (signer:any) => {
 
 const add_map_and_monster = async (signer:any) =>{
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86',
+        packageObjectId: '0x06fc60ac485d6ae9f669e7339c71c99b4ebf3675',
         module: 'map',
         function: 'add_map_and_monster',
         typeArguments: [],
         arguments: [
-            "0xc62f25b044a4069831d2ae317df9ffb04c40a3d2",
+            "0x045249c2bbc8f3f4c59461c2489b7c776a5ead77",
             "chicken",
             10
         ],
@@ -87,8 +87,8 @@ const query_map_info = async  () =>{
 const main =  async () =>{
     const signer = new RawSigner(keypair, provider);
     // await create_map_info(signer)
-    // await add_map_and_monster(signer)
-    await query_map_info()
+    await add_map_and_monster(signer)
+    // await query_map_info()
 }
 
 main();
