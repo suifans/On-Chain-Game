@@ -14,8 +14,8 @@ import {ethos} from "ethos-connect";
 import {JsonRpcProvider} from "@mysten/sui.js";
 import {query_map_info} from "../../method/map";
 import {query_monster_info} from "../../method/monster";
+import {packageObjectId} from "../../constants";
 
-const contractAddress = "0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86"
 
 const SelectRoleList = () =>{
     const [selectRoleList,setSelectRoleList] = useAtom(Select_RoleList)
@@ -43,10 +43,9 @@ const SelectRoleList = () =>{
     useEffect( () => {
       const query  =async () =>{
           setDownloadData(true)
-          const provider = new JsonRpcProvider();
           let info = []
           for (let i = 0; i < wallet?.contents?.objects.length; i++) {
-              if (wallet?.contents?.objects[i].details.data.type == `${contractAddress}::player::Player`) {
+              if (wallet?.contents?.objects[i].details.data.type == `${packageObjectId}::player::Player`) {
                   //查询角色信息
                   let data = wallet?.contents?.objects[i].details.data.fields
                   // console.log(data.id)
@@ -93,7 +92,7 @@ const SelectRoleList = () =>{
                 const signableTransaction = {
                     kind: 'moveCall' as const,
                     data: {
-                        packageObjectId: contractAddress,
+                        packageObjectId,
                         module: 'player',
                         function: 'create_player',
                         typeArguments: [],
