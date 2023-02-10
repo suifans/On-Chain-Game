@@ -3,7 +3,7 @@ module basic_package::map {
     use sui::object::UID;
     use std::vector;
     use sui::transfer;
-    use sui::tx_context::{sender, TxContext};
+    use sui::tx_context::{TxContext};
     use sui::object;
 
     struct Map has key {
@@ -28,7 +28,8 @@ module basic_package::map {
             id: object::new(ctx),
             map_info: m
         };
-        transfer::transfer(map,sender(ctx));
+        transfer::share_object(map);
+        // transfer::transfer(map,sender(ctx));
     }
 
     public entry fun add_monster_on_mapdetail(map:&mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8){
@@ -40,6 +41,34 @@ module basic_package::map {
     public entry fun new_mapdetail(map: &mut Map, name: vector<u8>, types: bool, monster_name: vector<u8>, monster_number: u8) {
         vec_map::insert(&mut map.map_info, MapDetails{name, types}, vector[MapMonsterSetting{monster_name, monster_number}]);
     }
+
+    public fun update_mapinfo_monster_number(map: &mut Map,map_name:vector<u8>,map_types:bool,monster_name: vector<u8>,old_monster_number: u8,new_monster_number: u8) {
+        let map_info = vec_map::get_mut(&mut map.map_info,&MapDetails{name:map_name,types:map_types});
+        let (states,monster_index) = vector::index_of(map_info,&MapMonsterSetting{
+            monster_name,
+            monster_number:old_monster_number
+        });
+        if (states){
+            let map_monster_setting= vector::borrow_mut<MapMonsterSetting>(map_info,monster_index);
+            map_monster_setting.monster_number = new_monster_number
+        }
+    }
+
+    public fun get_map_monster_number(map:&mut Map,map_name:vector<u8>,map_types:bool,monster_name: vector<u8>,old_monster_number: u8,) :u8{
+        let map_info = vec_map::get(&mut map.map_info,&MapDetails{name:map_name,types:map_types});
+        let (states,monster_index) = vector::index_of(map_info,&MapMonsterSetting{
+            monster_name,
+            monster_number:old_monster_number
+        });
+        if (states){
+            let map_monster_setting= vector::borrow<MapMonsterSetting>(map_info,monster_index);
+            let monster_number = map_monster_setting.monster_number;
+            monster_number
+        }else{
+            return 0u8
+        }
+    }
+
 
     //
 //    public entry fun set_map_moster_setting(map:&mut Map,name: vector<u8>, types: bool,monster_name:vector<u8>,monster_number:u8){

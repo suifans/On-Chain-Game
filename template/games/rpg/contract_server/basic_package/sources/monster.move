@@ -71,7 +71,8 @@ module basic_package::monster {
            id:object::new(ctx),
            monster:m
        };
-        transfer::transfer(monster_info,sender(ctx))
+        transfer::share_object(monster_info);
+        // transfer::transfer(monster_info,sender(ctx))
     }
 
     public entry fun add_monster_info(
@@ -171,8 +172,15 @@ module basic_package::monster {
         monster.defense_lower_limit
     }
 
-    public fun get_monster_defense_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
-        let monster  = vec_map::get(&monster_info.monster,&monster_name);
-        monster.defense_upper_limit
-    }
+    // public fun get_monster_defense_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+    //     let monster  = vec_map::get(&monster_info.monster,&monster_name);
+    //     monster.defense_upper_limit
+    // }
+    //
+    // public fun get_monster_defense_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+    //     let monster  = vec_map::get(&monster_info.monster,&monster_name);
+    //     // let drop_items = vec_map::
+    //
+    // }
+
 }

@@ -26,7 +26,11 @@ const create_player = async (signer:any) =>{
 }
 
 const battle_calculate = async (signer:any) =>{
+    const map_name = 'China'
     const monster_name = 'chicken'
+    const map_types = true
+    const monster_number = 10
+
     const moveCallTxn = await signer.executeMoveCall({
         packageObjectId,
         module: 'player',
@@ -35,7 +39,11 @@ const battle_calculate = async (signer:any) =>{
         arguments: [
             playerObjectId,
             monsterObjectId,
-            monster_name
+            mapObjectId,
+            map_name,
+            monster_name,
+            map_types,
+            monster_number,
         ],
         gasBudget: 1000000,
     });

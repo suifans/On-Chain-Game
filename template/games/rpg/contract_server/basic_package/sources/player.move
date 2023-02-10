@@ -4,6 +4,7 @@ module basic_package::player {
     use std::option::{Self, Option};
     use sui::transfer;
     use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp};
+    use basic_package::map::{update_mapinfo_monster_number, Map, get_map_monster_number};
 
 
     const MONSTER_WON: u64 = 0;
@@ -128,7 +129,16 @@ module basic_package::player {
         transfer::transfer(player,sender(ctx))
     }
 
-    public entry fun battle_calculate(player:&mut Player,monste_info:&mut MonsterInfo,monster_name:vector<u8>){
+    public entry fun battle_calculate(
+        player:&mut Player,
+        monste_info:&mut MonsterInfo,
+        map:&mut Map,
+        map_name:vector<u8>,
+        monster_name: vector<u8>,
+        map_types:bool,
+        monster_number: u8
+    )
+    {
         let player_attribute_attack_lower_limit = player.attribute.attack_lower_limit;
         let monster_defense_lower_limit = get_monster_defense_lower_limit(monste_info,monster_name);
         let player_damage_value = player_attribute_attack_lower_limit - monster_defense_lower_limit;
@@ -148,7 +158,14 @@ module basic_package::player {
             assert!(player_attribute_hp >= monster_damage_value , MONSTER_WON);
             index = index + 1;
         };
+        //update player hp
         player.attribute.hp = player_attribute_hp;
+        let old_monster_number = get_map_monster_number(map,map_name,map_types,monster_name,monster_number);
+        let new_monster_number = old_monster_number - 1u8;
+        // update map monster number
+        update_mapinfo_monster_number(map,map_name,map_types,monster_name,old_monster_number,new_monster_number)
+        // drop nft and send to player
+
     }
 
 
