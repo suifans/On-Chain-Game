@@ -151,7 +151,28 @@ module basic_package::monster {
         };
     }
 
-    public fun get_monster_info(monster_info:&mut MonsterInfo) :&MonsterInfo{
-        monster_info
+    public fun get_monster_hp(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        monster.hp
+    }
+
+    public fun get_monster_attack_lower_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        monster.attack_lower_limit
+    }
+
+    public fun get_monster_attack_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        monster.attack_upper_limit
+    }
+
+    public fun get_monster_defense_lower_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        monster.defense_lower_limit
+    }
+
+    public fun get_monster_defense_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        monster.defense_upper_limit
     }
 }

@@ -3,6 +3,10 @@ module basic_package::player {
     use sui::tx_context::{TxContext, sender};
     use std::option::{Self, Option};
     use sui::transfer;
+    use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp};
+
+
+    const MONSTER_WON: u64 = 0;
 
     struct Player has key {
         id: UID,
@@ -24,7 +28,6 @@ module basic_package::player {
         gold:u64
     }
 
-    /// The hero's trusty sword
     struct Weapon has key, store {
         id: UID,
         attack_lower_limit:u64,
@@ -100,7 +103,6 @@ module basic_package::player {
     // }
 
 
-
     /// Anyone can create a hero if they have a sword. All heroes start with the
     /// same attributes.
     public entry fun create_player(
@@ -126,8 +128,28 @@ module basic_package::player {
         transfer::transfer(player,sender(ctx))
     }
 
-    public fun get_player(player:&mut Player):&mut Player{
-        return player
+    public fun battle_calculate(player:&mut Player,monste_info:&mut MonsterInfo,monster_name:vector<u8>){
+        let player_attribute_attack_lower_limit = player.attribute.attack_lower_limit;
+        let monster_defense_lower_limit = get_monster_defense_lower_limit(monste_info,monster_name);
+        let player_damage_value = player_attribute_attack_lower_limit - monster_defense_lower_limit;
+
+        let monster_attack_lower_limit = get_monster_attack_lower_limit(monste_info,monster_name);
+        let player_attribute_defense_lower_limit = player.attribute.defense_lower_limit;
+        let monster_damage_value = monster_attack_lower_limit - player_attribute_defense_lower_limit;
+
+        let player_attribute_hp = player.attribute.hp;
+        let monster_hp = get_monster_hp(monste_info,monster_name);
+
+        let while_times = monster_hp/player_damage_value;
+        let index = 0 ;
+        while (index < while_times){
+            // monster battle test
+            player_attribute_hp = player_attribute_hp - monster_damage_value;
+            assert!(player_attribute_hp >= monster_damage_value , MONSTER_WON);
+            player_attribute_hp = player_attribute_hp - monster_damage_value;
+        };
+        player.attribute.hp = player_attribute_hp;
     }
+
 
 }
