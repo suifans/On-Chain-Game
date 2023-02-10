@@ -1,6 +1,6 @@
-const packageObjectId = '0xea824e31540524d03e7853495507943974a2d81c'
-const mapObjectId = '0x2a57ebfb7abe89d83976dd7c93287601f5aa7c83'
-const monsterObjectId = '0xe95e976a5f6a1fff39f6bac954084f6401ce9f6a'
+const packageObjectId = '0x80b1a4062ebf4177e24b0b2bd29a429402bc5286'
+const mapObjectId = '0x16c61a3b6939a039d59b781c038b7db51b85c99d'
+const monsterObjectId = '0xfc4b6392875336c634293c2f89d2025824b9f5c5'
 export {
     packageObjectId,
     mapObjectId,

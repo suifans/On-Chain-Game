@@ -7,7 +7,7 @@ import {
     MonsterDetails,
     RoleDetails,
     Select_LoginState,
-    Select_RoleList
+    Select_RoleList, SellPop_up_boxState, SellState
 } from "../../jotai";
 import {ChevronUpIcon} from "@heroicons/react/20/solid";
 import {useEffect} from "react";
@@ -16,7 +16,10 @@ import BattleResult from "../battle_result";
 import {ethos} from "ethos-connect";
 import {battle_calculateMain} from "../../method/player";
 import {JsonRpcProvider} from "@mysten/sui.js";
-import {monsterObjectId, packageObjectId} from "../../constants";
+import {mapObjectId, monsterObjectId, packageObjectId} from "../../constants";
+import {query_user_detail} from "../../method/user";
+import {query_monster_info} from "../../method/monster";
+import Pop_up_box from "../pop_up_box";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -46,7 +49,7 @@ const RoleDetail = () =>{
                 <div>
                     <div >
                         <div>
-                            {roleDetails.id}
+                            {/*{roleDetails.id}*/}
                             ID :  {ethos.truncateMiddle(roleDetails.id, 5)}
                         </div>
                         <div>
@@ -72,11 +75,8 @@ const RoleDetail = () =>{
                         </div>
                     </div>
                 </div>
-
                     <MonsterDetail/>
-
                 </div>
-
             </div>
         </>
     )
@@ -84,16 +84,18 @@ const RoleDetail = () =>{
 
 const MonsterDetail = () =>{
     const [monsterDetails,setMonsterDetails] = useAtom(MonsterDetails)
-    const [,setOpenLoading] =useAtom(LoadingState)
-    const {status, wallet } = ethos.useWallet();
+    const [openLoading,setOpenLoading] =useAtom(LoadingState)
+    const {status, wallet} = ethos.useWallet();
     const [,setSelectBattleResultState] = useAtom(BattleResultState)
     const [,setBattleResultDetail] = useAtom(BattleResultDetail)
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
+    const [sellState,setSellState] =useAtom(SellState)
+    const [,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
     const [mapName] = useAtom(MapName)
     useEffect(
         ()=>{
         },[])
-    const dareMonster =async (monster_name) =>{
+    const dareMonster =async (monster_name,monster_number) =>{
         // setOpenLoading(true)
         try {
             const playerObjectId = roleDetails.id;
@@ -107,7 +109,11 @@ const MonsterDetail = () =>{
                     arguments: [
                         playerObjectId,
                         monsterObjectId,
-                        monster_name
+                        mapObjectId,
+                        mapName,
+                        monster_name,
+                        true,
+                        monster_number,
                     ],
                     gasBudget: 1000000,
                 },
@@ -116,12 +122,41 @@ const MonsterDetail = () =>{
             // @ts-ignore
             const tx_status = result.effects.status.status;
             if(tx_status == "success"){
-                console.log(result)
+                const data =await query_user_detail(playerObjectId)
+                // @ts-ignore
+                const userResult = data.details.data.fields
+                const result = {
+                    id: userResult.id.id,
+                    attack_lower_limit: userResult.attribute.fields.attack_lower_limit,
+                    attack_upper_limit: userResult.attribute.fields.attack_upper_limit,
+                    defense_lower_limit: userResult.attribute.fields.defense_lower_limit,
+                    defense_upper_limit: userResult.attribute.fields.defense_upper_limit,
+                    gold: userResult.attribute.fields.gold,
+                    hp: userResult.attribute.fields.hp,
+                    level: userResult.attribute.fields.level,
+                }
+                setRoleDetails(result)
+
+                const monsterList = query_monster_info()
+                setMonsterDetails(await monsterList)
+
+                setOpenLoading(false)
+                setSellState({state:true,type:"挑战"})
+                setSellPop_up_boxState(true)
+                setTimeout(function() {
+                    setSellPop_up_boxState(false)
+                },3000)
+
             }else {
-                console.log(result)
+                setOpenLoading(false)
+                setSellState({state:false,type:"挑战"})
+                setSellPop_up_boxState(true)
             }
         } catch (error) {
             console.log(error)
+            setOpenLoading(false)
+            setSellState({state:false,type:"签名"})
+            setSellPop_up_boxState(true)
         }
 
         // setTimeout(function() {
@@ -181,7 +216,7 @@ const MonsterDetail = () =>{
                                     <div>
                                         {/*获得经验:{item.detail.ex}*/}
                                     </div>
-                                    <button onClick={()=>dareMonster(item.title)} className="bg-black text-white px-2 py-1 rounded-lg ">
+                                    <button onClick={()=>dareMonster(item.title,item.number)} className="bg-black text-white px-2 py-1 rounded-lg ">
                                         挑战
                                     </button>
                                 </Disclosure.Panel>
