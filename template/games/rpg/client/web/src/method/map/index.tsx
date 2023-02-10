@@ -1,7 +1,7 @@
 import {JsonRpcProvider} from "@mysten/sui.js";
+import {mapObjectId} from "../../constants";
 
 const provider = new JsonRpcProvider();
-const MapAddress = "0xc62f25b044a4069831d2ae317df9ffb04c40a3d2"
 
 function Uint8ArrayToString(fileData:any){
     let dataString = "";
@@ -14,7 +14,7 @@ function Uint8ArrayToString(fileData:any){
 
 const query_map_info = async  () => {
     const txn = await provider.getObject(
-        MapAddress,
+        mapObjectId,
     );
     // @ts-ignore
     const map_name = txn.details.data.fields.map_info.fields.contents[0].fields.key.fields.name

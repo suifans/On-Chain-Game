@@ -14,6 +14,9 @@ import {useEffect} from "react";
 import Loading from "../loading";
 import BattleResult from "../battle_result";
 import {ethos} from "ethos-connect";
+import {battle_calculateMain} from "../../method/player";
+import {JsonRpcProvider} from "@mysten/sui.js";
+import {monsterObjectId, packageObjectId} from "../../constants";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -43,6 +46,7 @@ const RoleDetail = () =>{
                 <div>
                     <div >
                         <div>
+                            {roleDetails.id}
                             ID :  {ethos.truncateMiddle(roleDetails.id, 5)}
                         </div>
                         <div>
@@ -81,26 +85,51 @@ const RoleDetail = () =>{
 const MonsterDetail = () =>{
     const [monsterDetails,setMonsterDetails] = useAtom(MonsterDetails)
     const [,setOpenLoading] =useAtom(LoadingState)
+    const {status, wallet } = ethos.useWallet();
     const [,setSelectBattleResultState] = useAtom(BattleResultState)
     const [,setBattleResultDetail] = useAtom(BattleResultDetail)
-
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
-
     const [mapName] = useAtom(MapName)
     useEffect(
         ()=>{
-
         },[])
+    const dareMonster =async (monster_name) =>{
+        // setOpenLoading(true)
+        try {
+            const playerObjectId = roleDetails.id;
+            const signableTransaction = {
+                kind: 'moveCall' as const,
+                data: {
+                    packageObjectId,
+                    module: 'player',
+                    function: 'battle_calculate',
+                    typeArguments: [],
+                    arguments: [
+                        playerObjectId,
+                        monsterObjectId,
+                        monster_name
+                    ],
+                    gasBudget: 1000000,
+                },
+            }
+            const result = await wallet.signAndExecuteTransaction(signableTransaction)
+            // @ts-ignore
+            const tx_status = result.effects.status.status;
+            if(tx_status == "success"){
+                console.log(result)
+            }else {
+                console.log(result)
+            }
+        } catch (error) {
+            console.log(error)
+        }
 
-    const dareMonster = () =>{
-        setOpenLoading(true)
-
-        setTimeout(function() {
-            setBattleResultDetail({state: true})
-            setOpenLoading(false)
-            setSelectBattleResultState(true)
-            // setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"红色宝剑"})
-        },3000)
+        // setTimeout(function() {
+        //     setBattleResultDetail({state: true})
+        //     setOpenLoading(false)
+        //     setSelectBattleResultState(true)
+        //     // setRoleDetails({name:"无上老祖",hp:"200",ex:"200",lv:"2",weapons:"红色宝剑"})
+        // },3000)
     }
     return(
         <div className="">
@@ -152,7 +181,7 @@ const MonsterDetail = () =>{
                                     <div>
                                         {/*获得经验:{item.detail.ex}*/}
                                     </div>
-                                    <button onClick={dareMonster} className="bg-black text-white px-2 py-1 rounded-lg ">
+                                    <button onClick={()=>dareMonster(item.title)} className="bg-black text-white px-2 py-1 rounded-lg ">
                                         挑战
                                     </button>
                                 </Disclosure.Panel>

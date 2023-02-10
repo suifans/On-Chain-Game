@@ -1,9 +1,7 @@
 import {JsonRpcProvider} from "@mysten/sui.js";
+import {mapObjectId, monsterObjectId} from "../../constants";
 
 const provider = new JsonRpcProvider();
-const MapAddress = "0xc62f25b044a4069831d2ae317df9ffb04c40a3d2"
-const MonsterAddress = "0x0152c0b32c106de2f46ddb4e743a216fea28fd36"
-
 function Uint8ArrayToString(fileData:any){
     let dataString = "";
     for (let i = 0; i < fileData.length; i++) {
@@ -15,11 +13,11 @@ function Uint8ArrayToString(fileData:any){
 const query_monster_info = async  () => {
 
     const txn = await provider.getObject(
-        MapAddress,
+        mapObjectId,
     );
     //查询怪物信息
     const monsterTxn = await provider.getObject(
-        MonsterAddress,
+        monsterObjectId,
     );
     // @ts-ignore
     const monsterAttributes = monsterTxn.details.data.fields.monster.fields.contents
