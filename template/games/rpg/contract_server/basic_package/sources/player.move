@@ -3,8 +3,9 @@ module basic_package::player {
     use sui::tx_context::{TxContext, sender};
     use std::option::{Self, Option};
     use sui::transfer;
-    use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp};
+    use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp, get_drop_nft};
     use basic_package::map::{update_mapinfo_monster_number, Map, get_map_monster_number};
+    use basic_package::items::ItemsInfo;
 
 
     const MONSTER_WON: u64 = 0;
@@ -131,27 +132,29 @@ module basic_package::player {
 
     public entry fun battle_calculate(
         player:&mut Player,
-        monste_info:&mut MonsterInfo,
+        monster_info:&mut MonsterInfo,
         map:&mut Map,
+        items_info:&mut ItemsInfo,
         map_name:vector<u8>,
         monster_name: vector<u8>,
         map_types:bool,
-        monster_number: u8
+        monster_number: u8,
+        ctx:&mut TxContext
     )
     {
         let player_attribute_attack_lower_limit = player.attribute.attack_lower_limit;
-        let monster_defense_lower_limit = get_monster_defense_lower_limit(monste_info,monster_name);
+        let monster_defense_lower_limit = get_monster_defense_lower_limit(monster_info,monster_name);
         let player_damage_value = player_attribute_attack_lower_limit - monster_defense_lower_limit;
 
-        let monster_attack_lower_limit = get_monster_attack_lower_limit(monste_info,monster_name);
+        let monster_attack_lower_limit = get_monster_attack_lower_limit(monster_info,monster_name);
         let player_attribute_defense_lower_limit = player.attribute.defense_lower_limit;
         let monster_damage_value = monster_attack_lower_limit - player_attribute_defense_lower_limit;
 
         let player_attribute_hp = player.attribute.hp;
-        let monster_hp = get_monster_hp(monste_info,monster_name);
+        let monster_hp = get_monster_hp(monster_info,monster_name);
 
         let while_times = monster_hp/player_damage_value;
-        let index = 0 ;
+        let index = 0u64 ;
         while (index < while_times){
             // monster battle test
             player_attribute_hp = player_attribute_hp - monster_damage_value;
@@ -163,9 +166,10 @@ module basic_package::player {
         let old_monster_number = get_map_monster_number(map,map_name,map_types,monster_name,monster_number);
         let new_monster_number = old_monster_number - 1u8;
         // update map monster number
-        update_mapinfo_monster_number(map,map_name,map_types,monster_name,old_monster_number,new_monster_number)
-        // drop nft and send to player
+        update_mapinfo_monster_number(map,map_name,map_types,monster_name,old_monster_number,new_monster_number);
+        // get drop nft and send to player
 
+        get_drop_nft(monster_info,monster_name,items_info,ctx)
     }
 
 

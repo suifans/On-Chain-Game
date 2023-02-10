@@ -26,7 +26,7 @@ const create_map_info = async (signer:any) => {
             "China",
             true,
             "chicken",
-            10
+            100
         ],
         gasBudget: 10000,
     });
@@ -42,7 +42,7 @@ const add_map_and_monster = async (signer:any) =>{
         arguments: [
             mapObjectId,
             "Deer",
-            10
+            100
         ],
         gasBudget: 10000,
     });

@@ -3,10 +3,12 @@ module basic_package::monster {
     use sui::vec_map::VecMap;
     use sui::object;
     use sui::transfer;
-    use sui::tx_context::{sender, TxContext};
+    use sui::tx_context::{TxContext};
     use sui::vec_map;
     use std::vector;
     use sui::devnet_nft;
+    use basic_package::items::{ItemsInfo, get_items_info};
+    use sui::stake::value;
 
 
     struct MonsterInfo has key {
@@ -27,19 +29,6 @@ module basic_package::monster {
         items:VecMap<vector<u8>,u64>
     }
 
-    struct ItemsInfo has key {
-        id: UID,
-        items:VecMap<vector<u8>,Items>
-    }
-
-    struct Items has store,copy,drop {
-        attack_lower_limit:u64,
-        attack_upper_limit:u64,
-        defense_lower_limit:u64,
-        defense_upper_limit:u64,
-        description:vector<u8>,
-        url:vector<u8>,
-    }
 
 
     public entry fun create_monster_info(
@@ -104,52 +93,21 @@ module basic_package::monster {
         )
     }
 
-    public entry fun create_items_info(ctx:&mut TxContext){
-        let items_info = ItemsInfo{
-            id:object::new(ctx),
-            items:vec_map::empty()
-        };
-        transfer::transfer(items_info,sender(ctx))
-    }
-
-    public entry fun add_items_info(
-        items_info:&mut ItemsInfo,
-        items_name:vector<u8>,
-        attack_lower_limit:u64,
-        attack_upper_limit:u64,
-        defense_lower_limit:u64,
-        defense_upper_limit:u64,
-        description:vector<u8>,
-        url:vector<u8>
-    ){
-        vec_map::insert(
-            &mut items_info.items,
-            items_name,
-            Items{
-                attack_lower_limit,
-                attack_upper_limit,
-                defense_lower_limit,
-                defense_upper_limit,
-                description,
-                url
-            }
-        )
-    }
-
-    public fun drop_nft(monster_name:vector<u8>,monster_info:&mut MonsterInfo,items_info:&mut ItemsInfo,ctx:&mut TxContext){
-        let monster = vec_map::get(&monster_info.monster,&monster_name);
-        let items = &monster.drop_config.items;
-        let items_name_keys = vec_map::keys(items);
-        let items_name_keys_length = vector::length(&items_name_keys);
-        let index = 0u64;
-        while (index < items_name_keys_length)  {
-            let items_name = vector::borrow(&items_name_keys,index);
-            let items_info = vec_map::get(&items_info.items,items_name);
-            let items_description = items_info.description;
-            let items_url = items_info.url;
-            devnet_nft::mint(*items_name,items_description,items_url,ctx);
-            index = index + 1
-        };
+    public fun get_drop_nft(monster_info:&mut MonsterInfo,monster_name:vector<u8>,items_info:&mut ItemsInfo,ctx:&mut TxContext){
+        // get monster drop all items_name
+        let (items_name_key,_items_number) = get_monster_drop_itmes(monster_info,monster_name);
+        // times
+        let items_while_times = vector::length(&items_name_key);
+        let items_index = 0u64 ;
+        while (items_index < items_while_times){
+            // get times name
+            let items_name = vector::borrow(&items_name_key,items_index);
+            // get items ds and url
+            let (items_description, items_url_info) = get_items_info(items_info,*items_name);
+            // send
+            devnet_nft::mint(*items_name,items_description,items_url_info,ctx);
+            items_index = items_index + 1;
+        }
     }
 
     public fun get_monster_hp(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
@@ -171,6 +129,15 @@ module basic_package::monster {
         let monster  = vec_map::get(&monster_info.monster,&monster_name);
         monster.defense_lower_limit
     }
+
+    public fun get_monster_drop_itmes(monster_info:&mut MonsterInfo,monster_name:vector<u8>):(vector<vector<u8>>,vector<u64>){
+        let monster  = vec_map::get(&monster_info.monster,&monster_name);
+        let drop_items = monster.drop_config.items;
+        let (items_name_key,items_number) = vec_map::into_keys_values(drop_items);
+        (items_name_key,items_number)
+    }
+
+
 
     // public fun get_monster_defense_upper_limit(monster_info:&mut MonsterInfo,monster_name:vector<u8>) : u64{
     //     let monster  = vec_map::get(&monster_info.monster,&monster_name);

@@ -18,7 +18,7 @@ const create_monster_info = async (signer:any)=> {
     const attack_upper_limit = "0"
     const defense_lower_limit = "0"
     const defense_upper_limit = "0"
-    const items_name = "weapon"
+    const items_name = "药水哥"
     const items_number = "1"
     const moveCallTxn = await signer.executeMoveCall({
         packageObjectId,
@@ -49,7 +49,7 @@ const add_monster_info = async (signer:any)=> {
     const attack_upper_limit = "2"
     const defense_lower_limit = "0"
     const defense_upper_limit = "0"
-    const items_name = "clothing"
+    const items_name = "药水哥"
     const items_number = "1"
     const moveCallTxn = await signer.executeMoveCall({
         packageObjectId: '0x06fc60ac485d6ae9f669e7339c71c99b4ebf3675',
