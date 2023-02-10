@@ -96,7 +96,7 @@ const MonsterDetail = () =>{
         ()=>{
         },[])
     const dareMonster =async (monster_name,monster_number) =>{
-        // setOpenLoading(true)
+        setOpenLoading(true)
         try {
             const playerObjectId = roleDetails.id;
             const signableTransaction = {
