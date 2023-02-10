@@ -1,17 +1,27 @@
 import {useAtom} from "jotai";
-import {LoadingState, RoleDetails, Select_RoleList, SellPop_up_boxState, SellState} from "../../jotai";
+import {
+    LoadingState,
+    MapName,
+    MonsterDetails,
+    RoleDetails,
+    Select_RoleList,
+    SellPop_up_boxState,
+    SellState
+} from "../../jotai";
 import {Dialog, Transition} from "@headlessui/react";
 import React, {Fragment, useCallback, useEffect, useState} from "react";
 import {ethos} from "ethos-connect";
 import {JsonRpcProvider} from "@mysten/sui.js";
+import {query_map_info} from "../../method/map";
+import {query_monster_info} from "../../method/monster";
 
+const contractAddress = "0x23c7e5d8a9a4b7736472640d89cc7b5379a41f86"
 
 const SelectRoleList = () =>{
     const [selectRoleList,setSelectRoleList] = useAtom(Select_RoleList)
-    const { status, wallet } = ethos.useWallet();
+    const {status, wallet } = ethos.useWallet();
     const [sellState,setSellState] =useAtom(SellState)
     const [,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
-
     const  roleList = [
         {
             id:"",
@@ -27,33 +37,47 @@ const SelectRoleList = () =>{
     const [RoleList,setRoleList] = useState(roleList)
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
     const [openLoading,setOpenLoading] =useState(false)
-    useEffect(() => {
-        let info = []
-        for (let i=0 ; i<wallet?.contents?.objects.length; i++){
-        if(wallet?.contents?.objects[i].details.data.type =="0xe8f243e780c5df0eb0b5cedf8e9fe44ccd2c5744::player::Player") {
+    const [mapName,setMapName] = useAtom(MapName)
+    const [monsterDetails,setMonsterDetails] = useAtom(MonsterDetails)
+    const [downloadData,setDownloadData] = useState(false)
+    useEffect( () => {
+      const query  =async () =>{
+          setDownloadData(true)
+          const provider = new JsonRpcProvider();
+          let info = []
+          for (let i = 0; i < wallet?.contents?.objects.length; i++) {
+              if (wallet?.contents?.objects[i].details.data.type == `${contractAddress}::player::Player`) {
+                  //查询角色信息
+                  let data = wallet?.contents?.objects[i].details.data.fields
+                  // console.log(data.id)
+                  let result = {
+                      id: data.id.id,
+                      attack_lower_limit: data.attribute.fields.attack_lower_limit,
+                      attack_upper_limit: data.attribute.fields.attack_upper_limit,
+                      defense_lower_limit: data.attribute.fields.defense_lower_limit,
+                      defense_upper_limit: data.attribute.fields.defense_upper_limit,
+                      gold: data.attribute.fields.gold,
+                      hp: data.attribute.fields.hp,
+                      level: data.attribute.fields.level,
+                  }
+                  info.push(result)
 
-           let data = wallet?.contents?.objects[i].details.data.fields
-           console.log(data.id)
-           let result = {
-               id: data.id.id,
-               attack_lower_limit:data.attribute.fields.attack_lower_limit,
-               attack_upper_limit:data.attribute.fields.attack_upper_limit,
-               defense_lower_limit:data.attribute.fields.defense_lower_limit,
-               defense_upper_limit:data.attribute.fields.defense_upper_limit,
-               gold:data.attribute.fields.gold,
-               hp:data.attribute.fields.hp,
-               level:data.attribute.fields.level,
-           }
-           info.push(result)
-       }
+              }
+          }
+
+          //查询地图信息
+          const map_name = query_map_info()
+          setMapName(await map_name)
+
+          //查询怪物信息
+          const monsterList = query_monster_info()
+          setMonsterDetails(await monsterList)
+
+          setRoleList(info)
+          setDownloadData(false)
         }
-        // console.log(ethos.truncateMiddle(wallet?.address, 6))
-        // for (let tokenName in wallet?.contents?.tokens) {
-        //     let token = wallet?.contents?.tokens[tokenName];
-        //     console.log(tokenName,token.balance)
-        // }
-        setRoleList(info)
-        // console.log("1111",wallet?.contents?.objects)
+
+        query()
     }, [wallet?.address])
 
     const selectRole = (item) =>{
@@ -61,8 +85,6 @@ const SelectRoleList = () =>{
         setSelectRoleList(false)
     }
 
-
-    const contractAddress = "0xe8f243e780c5df0eb0b5cedf8e9fe44ccd2c5744"
     const mint = useCallback(async () => {
         if(!openLoading){
          setOpenLoading(true)
@@ -158,10 +180,16 @@ const SelectRoleList = () =>{
                                         <div className=" font-light text-base  font-semibold ">
                                            选择角色
                                         </div>
-                                        <button  onClick={() => setSelectRoleList(false)}
-                                                 className="fa fa-times " aria-hidden="true"></button>
+                                        <button   onClick={() => setSelectRoleList(false)}
+                                                 className="fa fa-times  outline-none" aria-hidden="true"></button>
                                     </div>
-                                    <div className="my-5 h-40 pr-4  scrollbar-thin scrollbar-thumb-custom  scrollbar-thumb-rounded-full overflow-y-scroll">
+                                    <div className={downloadData?"flex justify-center py-10":"hidden"}>
+                                        <div className="animate-spin text-black">
+                                            <i className="fa fa-spinner f-spin fa-2x fa-fw"></i>
+                                        </div>
+                                    </div>
+                                    <div className={downloadData?"hidden":"my-5 h-40 pr-4  scrollbar-thin scrollbar-thumb-custom items-center scrollbar-thumb-rounded-full overflow-y-scroll"}>
+
                                         <div className="flex grid md:grid-cols-2  gap-4">
                                             {RoleList?.map((item,index)=>(
                                                 <div  key={item.id} className={"rounded-full "}>

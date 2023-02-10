@@ -14,6 +14,10 @@ const SellPop_up_boxState = atom(false)
 //交易是否成功
 const SellState = atom({state:false,type:""})
 //战斗是否成功
+
+const MapName = atom("Null")
+//地图名字
+
 const BattleResultDetail = atom(
     {
         state:false,
@@ -34,13 +38,15 @@ const RoleDetails = atom(
 const MonsterDetails = atom([{
     title:"",
     detail: {
-        lv:"",
-        power: "",
+        attack_lower_limit:"",
+        attack_upper_limit: "",
+        defense_lower_limit:"",
+        defense_upper_limit:"",
         hp:"",
-        ex:"",
-    }
+    },
+    number:""
 }])
 
 
 
-export {SellState,SellPop_up_boxState,Select_RoleList,Select_LoginState,RoleDetails,MonsterDetails,LoadingState,BattleResultState,BattleResultDetail}
+export {MapName,SellState,SellPop_up_boxState,Select_RoleList,Select_LoginState,RoleDetails,MonsterDetails,LoadingState,BattleResultState,BattleResultDetail}

@@ -3,7 +3,7 @@ import {useAtom} from "jotai";
 import {
     BattleResultDetail,
     BattleResultState,
-    LoadingState,
+    LoadingState, MapName,
     MonsterDetails,
     RoleDetails,
     Select_LoginState,
@@ -85,28 +85,12 @@ const MonsterDetail = () =>{
     const [,setBattleResultDetail] = useAtom(BattleResultDetail)
 
     const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
+
+    const [mapName] = useAtom(MapName)
     useEffect(
         ()=>{
-            setMonsterDetails([
-                {
-                title:"鸡",
-                detail: {
-                    lv:"1",
-                    power: "10",
-                    hp:"30",
-                    ex:"100",
-                }
-            },
-                {
-                    title:"狗",
-                    detail: {
-                        lv:"2",
-                        power: "20",
-                        hp:"50",
-                        ex:"200",
-                    }
-                },
-            ])},[])
+
+        },[])
 
     const dareMonster = () =>{
         setOpenLoading(true)
@@ -121,6 +105,9 @@ const MonsterDetail = () =>{
     return(
         <div className="">
             <div>
+                当前地图 ：{mapName}
+            </div>
+            <div>
                 怪物列表
             </div>
             <div className="  w-96    ">
@@ -128,7 +115,8 @@ const MonsterDetail = () =>{
                     <Disclosure key={item.title}>
                         {({ open }) => (
                             <>
-                                <Disclosure.Button className="flex w-full items-center rounded-2xl  bg-white p-4 text-left  font-medium text-black   border-gray-200">
+                                <Disclosure.Button className="flex w-full justify-between items-center rounded-2xl  bg-white p-4 text-left  font-medium text-black   border-gray-200">
+                                    <div className="flex items-center">
                                     <div>
                                         <ChevronUpIcon
                                             className={`${
@@ -136,25 +124,35 @@ const MonsterDetail = () =>{
                                             } h-5 w-5 text-black`}
                                         />
                                     </div>
-                                    <span key={item.title} className="ml-5">{item.title}</span>
 
+                                    <span key={item.title} className="ml-5">{item.title}</span>
+                                    </div>
+                                    <div>
+                                        还有{item.number}只
+                                    </div>
                                 </Disclosure.Button>
                                 <div className="border-b border-gray-200 ">
                                 </div>
                                 <Disclosure.Panel className={classNames("px-10 py-4  text-gray-800 font-normal bg-gray-100 list-decimal")}>
                                     <div>
-                                        等级:{item.detail.lv}
+                                        血量 : {item.detail.hp}
                                     </div>
                                     <div>
-                                        攻击力:{item.detail.power}
+                                        攻击上限 : {item.detail.attack_upper_limit}
                                     </div>
                                     <div>
-                                        血量:{item.detail.hp}
+                                        攻击下限 : {item.detail.attack_lower_limit}
                                     </div>
                                     <div>
-                                        获得经验:{item.detail.ex}
+                                        防御上限 : {item.detail.defense_upper_limit}
                                     </div>
-                                    <button onClick={dareMonster} className="bg-black text-white px-2 py-1 rounded-lg">
+                                    <div>
+                                        防御下限 : {item.detail.defense_lower_limit}
+                                    </div>
+                                    <div>
+                                        {/*获得经验:{item.detail.ex}*/}
+                                    </div>
+                                    <button onClick={dareMonster} className="bg-black text-white px-2 py-1 rounded-lg ">
                                         挑战
                                     </button>
                                 </Disclosure.Panel>
