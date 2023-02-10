@@ -29,7 +29,7 @@ const battle_calculate = async (signer:any) =>{
     const map_name = 'China'
     const monster_name = 'chicken'
     const map_types = true
-    const monster_number = 10
+    const monster_number = 100
 
     const moveCallTxn = await signer.executeMoveCall({
         packageObjectId,
