@@ -16,7 +16,7 @@ import BattleResult from "../battle_result";
 import {ethos} from "ethos-connect";
 import {battle_calculateMain} from "../../method/player";
 import {JsonRpcProvider} from "@mysten/sui.js";
-import {mapObjectId, monsterObjectId, packageObjectId} from "../../constants";
+import {itemsInfoObjectId, mapObjectId, monsterObjectId, packageObjectId} from "../../constants";
 import {query_user_detail} from "../../method/user";
 import {query_monster_info} from "../../method/monster";
 import Pop_up_box from "../pop_up_box";
@@ -110,10 +110,11 @@ const MonsterDetail = () =>{
                         playerObjectId,
                         monsterObjectId,
                         mapObjectId,
+                        itemsInfoObjectId,
                         mapName,
                         monster_name,
                         true,
-                        monster_number,
+                        monster_number
                     ],
                     gasBudget: 1000000,
                 },
