@@ -1,6 +1,7 @@
 import {Ed25519Keypair, JsonRpcProvider, RawSigner, TypeTag} from '@mysten/sui.js';
 import {fromExportedKeypair} from "@mysten/sui.js";
 import {ExportedKeypair} from "@mysten/sui.js/src/cryptography/keypair";
+import {mapObjectId, packageObjectId} from "../Constants";
 const  _ = require('lodash');
 const { execSync } = require('child_process');
 
@@ -17,13 +18,15 @@ const keypair = fromExportedKeypair(key_pair_struct)
 
 const create_map_info = async (signer:any) => {
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x06fc60ac485d6ae9f669e7339c71c99b4ebf3675',
+        packageObjectId,
         module: 'map',
         function: 'create_map_info',
         typeArguments: [],
         arguments: [
-            "biqi",
-            true
+            "China",
+            true,
+            "chicken",
+            10
         ],
         gasBudget: 10000,
     });
@@ -32,13 +35,13 @@ const create_map_info = async (signer:any) => {
 
 const add_map_and_monster = async (signer:any) =>{
     const moveCallTxn = await signer.executeMoveCall({
-        packageObjectId: '0x06fc60ac485d6ae9f669e7339c71c99b4ebf3675',
+        packageObjectId,
         module: 'map',
         function: 'add_map_and_monster',
         typeArguments: [],
         arguments: [
-            "0x045249c2bbc8f3f4c59461c2489b7c776a5ead77",
-            "chicken",
+            mapObjectId,
+            "Deer",
             10
         ],
         gasBudget: 10000,
@@ -86,8 +89,8 @@ const query_map_info = async  () =>{
 
 const main =  async () =>{
     const signer = new RawSigner(keypair, provider);
-    // await create_map_info(signer)
-    await add_map_and_monster(signer)
+    await create_map_info(signer)
+    // await add_map_and_monster(signer)
     // await query_map_info()
 }
 

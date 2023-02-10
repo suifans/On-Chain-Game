@@ -114,10 +114,10 @@ module basic_package::player {
             attribute:Attribute{
                 level:1,
                 hp:100,
-                attack_lower_limit:1,
-                attack_upper_limit:2,
-                defense_lower_limit:0,
-                defense_upper_limit:1,
+                attack_lower_limit:2,
+                attack_upper_limit:0,
+                defense_lower_limit:1,
+                defense_upper_limit:0,
                 gold:0
             },
             equipment_slot:Equipment_Slot{
@@ -128,7 +128,7 @@ module basic_package::player {
         transfer::transfer(player,sender(ctx))
     }
 
-    public fun battle_calculate(player:&mut Player,monste_info:&mut MonsterInfo,monster_name:vector<u8>){
+    public entry fun battle_calculate(player:&mut Player,monste_info:&mut MonsterInfo,monster_name:vector<u8>){
         let player_attribute_attack_lower_limit = player.attribute.attack_lower_limit;
         let monster_defense_lower_limit = get_monster_defense_lower_limit(monste_info,monster_name);
         let player_damage_value = player_attribute_attack_lower_limit - monster_defense_lower_limit;
@@ -146,7 +146,7 @@ module basic_package::player {
             // monster battle test
             player_attribute_hp = player_attribute_hp - monster_damage_value;
             assert!(player_attribute_hp >= monster_damage_value , MONSTER_WON);
-            player_attribute_hp = player_attribute_hp - monster_damage_value;
+            index = index + 1;
         };
         player.attribute.hp = player_attribute_hp;
     }
