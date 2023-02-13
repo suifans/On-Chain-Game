@@ -6,9 +6,13 @@ module basic_package::player {
     use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp, get_drop_nft};
     use basic_package::map::{update_mapinfo_monster_number, Map, get_map_monster_number};
     use basic_package::items::ItemsInfo;
+    use sui::devnet_nft;
+    use sui::devnet_nft::DevNetNFT;
+    use basic_package::player_rules::{PlayerLevelAndAttribute, get_level_hp, get_level_attack_lower_limit, get_level_attack_upper_limit, get_level_defense_lower_limit, get_level_defense_upper_limit, get_level_cost};
 
 
     const MONSTER_WON: u64 = 0;
+    const NO_MONEY:u64 = 1;
 
     struct Player has key {
         id: UID,
@@ -48,46 +52,6 @@ module basic_package::player {
         weapon: Option<Weapon>,
         clothing: Option<Clothing>,
     }
-
-    // --- Gameplay ---
-    /// Slay the `boar` with the `hero`'s sword, get experience.
-    /// Aborts if the hero has 0 HP or is not strong enough to slay the boar
-    // public entry fun slay(
-    //     game: &GameInfo, warrior: &mut Player, boar: Boar, ctx: &TxContext
-    // ) {
-    //     check_id(game, warrior.game_id);
-    //     check_id(game, boar.game_id);
-    //     let Boar { id: boar_id, strength: boar_strength, hp, game_id: _ } = boar;
-    //     let hero_strength = hero_strength(hero);
-    //     let boar_hp = hp;
-    //     let hero_hp = hero.hp;
-    //     // attack the boar with the sword until its HP goes to zero
-    //     while (boar_hp > hero_strength) {
-    //         // first, the hero attacks
-    //         boar_hp = boar_hp - hero_strength;
-    //         // then, the boar gets a turn to attack. if the boar would kill
-    //         // the hero, abort--we can't let the boar win!
-    //         assert!(hero_hp >= boar_strength , EBOAR_WON);
-    //         hero_hp = hero_hp - boar_strength;
-    //
-    //     };
-    //     // hero takes their licks
-    //     hero.hp = hero_hp;
-    //     // hero gains experience proportional to the boar, sword grows in
-    //     // strength by one (if hero is using a sword)
-    //     hero.experience = hero.experience + hp;
-    //     if (option::is_some(&hero.sword)) {
-    //         level_up_sword(option::borrow_mut(&mut hero.sword), LICENSE-APACHE2)
-    //     };
-    //     // let the world know about the hero's triumph by emitting an event!
-    //     event::emit(BoarSlainEvent {
-    //         slayer_address: tx_context::sender(ctx),
-    //         hero: object::uid_to_inner(&hero.id),
-    //         boar: object::uid_to_inner(&boar_id),
-    //         game_id: id(game)
-    //     });
-    //     object::delete(boar_id);
-    // }
 
     /// Add `new_sword` to the hero's inventory and return the old sword
     /// (if any)
@@ -168,9 +132,35 @@ module basic_package::player {
         // update map monster number
         update_mapinfo_monster_number(map,map_name,map_types,monster_name,old_monster_number,new_monster_number);
         // get drop nft and send to player
-
         get_drop_nft(monster_info,monster_name,items_info,ctx)
     }
 
 
+    // public entry fun sell_items(nft:&mut DevNetNFT,player:&mut Player){
+    //     devnet_nft::burn(*nft);
+    //     player.attribute.gold = player.attribute.gold + 1;
+    // }
+
+    public entry fun upgrade_level(player: &mut Player,player_rules:&mut PlayerLevelAndAttribute){
+        let level = player.attribute.level;
+        let gold_cost = get_level_cost(player_rules,level);
+        assert!(player.attribute.gold >= gold_cost,NO_MONEY);
+        player.attribute.gold = player.attribute.gold - gold_cost;
+        let new_hp = get_level_hp(player_rules,level);
+        let new_attack_lower_limit = get_level_attack_lower_limit(player_rules,level);
+        let new_attack_upper_limit = get_level_attack_upper_limit(player_rules,level);
+        let new_defense_lower_limit = get_level_defense_lower_limit(player_rules,level);
+        let new_defense_upper_limit = get_level_defense_upper_limit(player_rules,level);
+        player.attribute.hp = new_hp;
+        player.attribute.attack_lower_limit = new_attack_lower_limit;
+        player.attribute.attack_upper_limit = new_attack_upper_limit;
+        player.attribute.defense_lower_limit = new_defense_lower_limit;
+        player.attribute.defense_upper_limit =  new_defense_upper_limit;
+    }
+
+    public entry fun restore_hit_points(player: &mut Player){
+        assert!(player.attribute.gold >= 1u64,NO_MONEY);
+        player.attribute.gold = player.attribute.gold - 1;
+        player.attribute.hp = 100u64;
+    }
 }
