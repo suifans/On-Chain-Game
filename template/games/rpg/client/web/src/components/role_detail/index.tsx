@@ -1,4 +1,4 @@
-import { Disclosure } from "@headlessui/react";
+import {Dialog, Disclosure, Transition} from "@headlessui/react";
 import {useAtom} from "jotai";
 import {
     BattleResultDetail,
@@ -10,13 +10,13 @@ import {
     Select_RoleList, SellPop_up_boxState, SellState
 } from "../../jotai";
 import {ChevronUpIcon} from "@heroicons/react/20/solid";
-import {useEffect} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import Loading from "../loading";
 import BattleResult from "../battle_result";
 import {ethos} from "ethos-connect";
 import {battle_calculateMain} from "../../method/player";
 import {JsonRpcProvider} from "@mysten/sui.js";
-import {itemsInfoObjectId, mapObjectId, monsterObjectId, packageObjectId} from "../../constants";
+import {itemsInfoObjectId, mapObjectId, monsterObjectId, packageObjectId, playerRulesObjectId} from "../../constants";
 import {query_user_detail} from "../../method/user";
 import {query_monster_info} from "../../method/monster";
 import Pop_up_box from "../pop_up_box";
@@ -27,21 +27,125 @@ function classNames(...classes) {
 
 
 const RoleDetail = () =>{
-
+    const {status, wallet} = ethos.useWallet();
     const [login,setLogin] = useAtom(Select_LoginState)
     const [selectRoleList,setSelectRoleList] = useAtom(Select_RoleList)
-    const [roleDetails,] = useAtom(RoleDetails)
+    const [roleDetails,setRoleDetails] = useAtom(RoleDetails)
 
-    const selectRole = () =>{
-        setSelectRoleList(true)
+    const [sellState,setSellState] =useAtom(SellState)
+    const [,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
+    const [openLoading,setOpenLoading] =useAtom(LoadingState)
+    const [selectUpgrade,setSelectUpgrade] = useState(false)
+    const [selectRecover,setSelectRecover] = useState(false)
+    const [errorState,setErrorState] = useState(false)
+
+    const Upgrade = async () => {
+        if(Number(roleDetails.gold) >= Number(roleDetails.level) * 4) {
+            setOpenLoading(true)
+            try {
+                const playerObjectId = roleDetails.id;
+                const signableTransaction = {
+                    kind: 'moveCall' as const,
+                    data: {
+                        packageObjectId,
+                        module: 'player',
+                        function: 'upgrade_level',
+                        typeArguments: [],
+                        arguments: [
+                            playerObjectId,
+                            playerRulesObjectId,
+                        ],
+                        gasBudget: 1000000,
+                    },
+                }
+                const result = await wallet.signAndExecuteTransaction(signableTransaction)
+                console.log(result)
+                // @ts-ignore
+                const tx_status = result.effects.status.status;
+                if (tx_status == "success") {
+
+                    const data = await query_user_detail(playerObjectId)
+                    setRoleDetails(data)
+                    //刷新用户信息
+
+
+                    setSellState({state: true, type: "升级", hash: result.certificate.transactionDigest})
+                    setSellPop_up_boxState(true)
+                    setOpenLoading(false)
+                } else {
+                    setOpenLoading(false)
+                    setSellState({state: false, type: "升级", hash: ""})
+                    setSellPop_up_boxState(true)
+
+                }
+            } catch (error) {
+                console.log(error)
+                setOpenLoading(false)
+                setSellState({state: false, type: "签名", hash: ""})
+                setSellPop_up_boxState(true)
+            }
+        }else {
+            setErrorState(true)
+        }
     }
+
+    const Recover = async () => {
+        if(Number(roleDetails.gold) >= 1){
+            setOpenLoading(true)
+            setSelectRecover(false)
+            try {
+                const playerObjectId = roleDetails.id;
+                const signableTransaction = {
+                    kind: 'moveCall' as const,
+                    data: {
+                        packageObjectId,
+                        module: 'player',
+                        function: 'restore_hit_points',
+                        typeArguments: [],
+                        arguments: [
+                            playerObjectId,
+                            playerRulesObjectId,
+                        ],
+                        gasBudget: 1000000,
+                    },
+                }
+                const result = await wallet.signAndExecuteTransaction(signableTransaction)
+                console.log(result)
+                // @ts-ignore
+                const tx_status = result.effects.status.status;
+                if(tx_status == "success"){
+                    const data = await query_user_detail(playerObjectId)
+                    setRoleDetails(data)
+                    //刷新用户信息
+                    setSellState({state:true,type:"恢复",hash: result.certificate.transactionDigest})
+                    setSellPop_up_boxState(true)
+                    setOpenLoading(false)
+
+                }else {
+                    setOpenLoading(false)
+                    setSellState({state:false,type:"恢复",hash: ""})
+                    setSellPop_up_boxState(true)
+
+                }
+            } catch (error) {
+                console.log(error)
+                setOpenLoading(false)
+                setSellState({state:false,type:"签名",hash: ""})
+                setSellPop_up_boxState(true)
+            }
+        }else {
+            setErrorState(true)
+        }
+
+    }
+
     return(
         <>
             <div className="w-full">
                 <div className={login?"hidden":""}>
                     ....
                 </div>
-                <button onClick={selectRole} className={login?"":"hidden"}>
+                <button onClick={()=>{setSelectRoleList(true)}} className={login?"":"hidden"}>
                     {roleDetails.id ===""?"选择角色":"切换角色"}
                 </button>
                 <div className={roleDetails.id ==""?"hidden":"flex justify-between  w-full  mt-10"}>
@@ -59,7 +163,7 @@ const RoleDetail = () =>{
                             <div className="flex w-24">
                                 等级 : {roleDetails.level}
                             </div>
-                            <button className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
+                            <button onClick={()=>setSelectUpgrade(true)} className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
                                 升级
                             </button>
                         </div>
@@ -67,7 +171,7 @@ const RoleDetail = () =>{
                             <div className="flex w-24">
                                 血量 : {roleDetails.hp}
                             </div>
-                            <button className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
+                            <button  onClick={()=>setSelectRecover(true)} className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
                                 恢复
                             </button>
                         </div>
@@ -88,6 +192,169 @@ const RoleDetail = () =>{
                     <MonsterDetail/>
                 </div>
             </div>
+
+            <Transition.Root show={selectUpgrade} as={Fragment}>
+                <Dialog as="div" className="fixed z-30 inset-0 overflow-y-auto " onClose={setSelectUpgrade}>
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center shadow-2xl   sm:block sm:p-0">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-80 transition-opacity" />
+                        </Transition.Child>
+
+                        {/* This element is to trick the browser into centering the modal contents. */}
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;
+          </span>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            enterTo="opacity-100 translate-y-0 sm:scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
+                            <div className="inline-block align-bottom p-0.5 rounded-lg  w-11/12 md:w-5/12 2xl:w-3/12  rounded-lg  text-left overflow-hidden shadow-xl transform transition-all sm:y-8 sm:align-middle   ">
+                                <div className="bg-white px-4 py-5 sm:px-6 lg:px-12 rounded-md">
+                                    <div className='flex justify-end text-xl font-light text-black 	mb-5 items-centers'>
+                                        <button   onClick={() => setSelectUpgrade(false)}
+                                                  className="fa fa-times  outline-none" aria-hidden="true"></button>
+                                    </div>
+                                    <div className="flex justify-center">
+                                        你确定你消耗
+                                        <div className="mx-1 font-semibold">
+                                            {Number(roleDetails.level) * 4}
+                                    </div>
+                                        金币来升级吗
+                                    </div>
+                                    <div className="flex justify-between mt-10">
+                                        <button onClick={()=>setSelectUpgrade(false)} className="bg-red-100 text-red-500 px-4 py-1 rounded-lg ">
+                                            取消
+                                        </button>
+                                        <button  onClick={Upgrade} className="bg-green-100 text-green-500 px-4 py-1 rounded-lg ">
+                                            确认
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+
+            <Transition.Root show={selectRecover} as={Fragment}>
+                <Dialog as="div" className="fixed z-30 inset-0 overflow-y-auto " onClose={setSelectRecover}>
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center shadow-2xl   sm:block sm:p-0">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-80 transition-opacity" />
+                        </Transition.Child>
+
+                        {/* This element is to trick the browser into centering the modal contents. */}
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;
+          </span>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            enterTo="opacity-100 translate-y-0 sm:scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
+                            <div className="inline-block align-bottom p-0.5 rounded-lg  w-11/12 md:w-5/12 2xl:w-3/12  rounded-lg  text-left overflow-hidden shadow-xl transform transition-all sm:y-8 sm:align-middle   ">
+                                <div className="bg-white px-4 py-5 sm:px-6 lg:px-12 rounded-md">
+                                    <div className='flex justify-end text-xl font-light text-black 	mb-5 items-centers'>
+                                        <button   onClick={() => setSelectRecover(false)}
+                                                  className="fa fa-times  outline-none" aria-hidden="true"></button>
+                                    </div>
+                                    <div className="flex justify-center">
+                                        你确定你消耗
+                                        <div className="mx-1 font-semibold">
+                                            1
+                                        </div>
+                                        金币来恢复到满血吗
+                                    </div>
+                                    <div className="flex justify-between mt-10">
+                                        <button onClick={()=>setSelectRecover(false)} className="bg-red-100 text-red-500 px-4 py-1 rounded-lg ">
+                                            取消
+                                        </button>
+                                        <button  onClick={Recover} className="bg-green-100 text-green-500 px-4 py-1 rounded-lg ">
+                                            确认
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+
+            <Transition.Root show={errorState} as={Fragment}>
+                <Dialog as="div" className="fixed z-30 inset-0 overflow-y-auto " onClose={setErrorState}>
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center shadow-2xl   sm:block sm:p-0">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-80 transition-opacity" />
+                        </Transition.Child>
+
+                        {/* This element is to trick the browser into centering the modal contents. */}
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;
+          </span>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            enterTo="opacity-100 translate-y-0 sm:scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
+                            <div className="inline-block align-bottom p-0.5 rounded-lg  w-11/12 md:w-5/12 2xl:w-3/12  rounded-lg  text-left overflow-hidden shadow-xl transform transition-all sm:y-8 sm:align-middle   ">
+                                <div className="bg-white px-4 py-5 sm:px-6 lg:px-12 rounded-md">
+                                    <div className='flex justify-end text-xl font-light text-black 	mb-5 items-centers'>
+                                        <button   onClick={() => setErrorState(false)}
+                                                  className="fa fa-times  outline-none" aria-hidden="true"></button>
+                                    </div>
+                                    <div className="flex justify-center">
+                                       金币不足
+                                    </div>
+                                    <div className="flex justify-center mt-10">
+                                        <button onClick={()=>setErrorState(false)} className="bg-red-100 text-red-500 px-4 py-1 rounded-lg ">
+                                            取消
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition.Root>
         </>
     )
 }

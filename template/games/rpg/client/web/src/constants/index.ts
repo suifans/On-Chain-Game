@@ -1,10 +1,12 @@
-const packageObjectId = '0xe89cc3adf853ee9a54fe656c4071038e38a252f0'
-const mapObjectId = '0xdf0f79a24e4e12be71ec264251dba112833627ea'
-const monsterObjectId = '0x95c31533bf605b432601ab3890199c505af66c69'
-const itemsInfoObjectId = '0x565408a2857f34845ff1bd3c84309393b814bed5'
+const packageObjectId = '0x78f6ced6b9645519f7e9e9222e3cf4a66c8d56d1'
+const mapObjectId = '0x26348ceda7c2f3fab8e3038c0f41eb675e0567e1'
+const monsterObjectId = '0x5e6fc70fcd0d728c4f845f4a49f958e135109463'
+const itemsInfoObjectId = '0x48990e899ada81195dff62d5e748a52bf161a378'
+const playerRulesObjectId = '0xfee595f64b9cecf3537f2b68e6ecad8867fd2581'
 export {
     packageObjectId,
     mapObjectId,
     monsterObjectId,
-    itemsInfoObjectId
+    itemsInfoObjectId,
+    playerRulesObjectId
 }
