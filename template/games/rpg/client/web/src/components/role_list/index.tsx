@@ -22,7 +22,7 @@ const SelectRoleList = () =>{
     const {status, wallet } = ethos.useWallet();
     const [sellState,setSellState] =useAtom(SellState)
     const [,setSellPop_up_boxState] = useAtom(SellPop_up_boxState)
-    const  roleList = [
+    const roleList = [
         {
             id:"",
             attack_lower_limit:"",
@@ -42,41 +42,45 @@ const SelectRoleList = () =>{
     const [downloadData,setDownloadData] = useState(false)
     useEffect(() => {
         setDownloadData(true)
-        query()
-    }, [wallet?.address])
-    const query  =async () =>{
-        let info = []
-        for (let i = 0; i < wallet?.contents?.objects.length; i++) {
-            if (wallet?.contents?.objects[i].details.data.type == `${packageObjectId}::player::Player`) {
-                //查询角色信息
-                let data = wallet?.contents?.objects[i].details.data.fields
-                // console.log(data.id)
-                let result = {
-                    id: data.id.id,
-                    attack_lower_limit: data.attribute.fields.attack_lower_limit,
-                    attack_upper_limit: data.attribute.fields.attack_upper_limit,
-                    defense_lower_limit: data.attribute.fields.defense_lower_limit,
-                    defense_upper_limit: data.attribute.fields.defense_upper_limit,
-                    gold: data.attribute.fields.gold,
-                    hp: data.attribute.fields.hp,
-                    level: data.attribute.fields.level,
-                }
-                info.push(result)
 
+        const query  = async () =>{
+            let info = []
+            console.log("sssssssssssssss",wallet?.contents?.objects.length)
+            for (let i = 0; i < wallet?.contents?.objects.length; i++) {
+                if (wallet?.contents?.objects[i].details.data.type == `${packageObjectId}::player::Player`) {
+                    //查询角色信息
+                    let data = wallet?.contents?.objects[i].details.data.fields
+                    // console.log(data.id)
+                    let result = {
+                        id: data.id.id,
+                        attack_lower_limit: data.attribute.fields.attack_lower_limit,
+                        attack_upper_limit: data.attribute.fields.attack_upper_limit,
+                        defense_lower_limit: data.attribute.fields.defense_lower_limit,
+                        defense_upper_limit: data.attribute.fields.defense_upper_limit,
+                        gold: data.attribute.fields.gold,
+                        hp: data.attribute.fields.hp,
+                        level: data.attribute.fields.level,
+                    }
+                    info.push(result)
+
+                }
             }
+
+            //查询地图信息
+            const map_name = query_map_info()
+            setMapName(await map_name)
+
+            //查询怪物信息
+            const monsterList = query_monster_info()
+            setMonsterDetails(await monsterList)
+
+            setRoleList(info)
+            setDownloadData(false)
         }
 
-        //查询地图信息
-        const map_name = query_map_info()
-        setMapName(await map_name)
+        query()
+    }, [wallet?.contents?.objects])
 
-        //查询怪物信息
-        const monsterList = query_monster_info()
-        setMonsterDetails(await monsterList)
-
-        setRoleList(info)
-        setDownloadData(false)
-    }
 
     const selectRole = (item) =>{
         setRoleDetails(item)
@@ -139,6 +143,7 @@ const SelectRoleList = () =>{
             }
         }
 
+
     }, [wallet])
 
     return(
@@ -184,14 +189,16 @@ const SelectRoleList = () =>{
                                             <i className="fa fa-spinner f-spin fa-2x fa-fw"></i>
                                         </div>
                                     </div>
-                                    <div className={downloadData?"hidden":"my-5 h-40 pr-4  scrollbar-thin scrollbar-thumb-custom items-center scrollbar-thumb-rounded-full overflow-y-scroll"}>
-
+                                    <div className={downloadData?"hidden":"my-5 max-h-40 pr-4  scrollbar-thin scrollbar-thumb-custom items-center scrollbar-thumb-rounded-full overflow-y-scroll"}>
+                                        <div className={RoleList.length==0?"text-center pt-5":"hidden"}>
+                                            暂无角色
+                                        </div>
                                         <div className="flex grid md:grid-cols-2  gap-4">
                                             {RoleList?.map((item,index)=>(
                                                 <div  key={item.id} className={"rounded-full "}>
                                                     <button onClick={()=>selectRole(item)}  className="flex ">
                                                         <div id={wallet?.name} className="flex items-center">
-                                                            <div>{index+1}</div>
+                                                            <div className="w-6">{index+1}</div>
                                                             <img  className="w-10 mx-2 rounded-full" src={wallet?.icon} alt=""/>
                                                             <div className="text-sm ml-1 text-left">
                                                                 {/*<div  className="text-black text-left">{truncateMiddle(wallet?.address, 4)}</div>*/}
@@ -212,13 +219,11 @@ const SelectRoleList = () =>{
                                     </div>
                                     <div className="flex justify-center py-4 ">
                                             <button onClick={mint} className="bg-black rounded-md  px-4 py-1.5 text-white text-sm">
-
                                                 <div className={openLoading?"hidden":""}>创建新的角色</div>
                                                 <div className={openLoading?"animate-spin text-white":"hidden"}>
                                                     <i className="fa fa-spinner f-spin fa-2x fa-fw"></i>
                                                 </div>
                                             </button>
-
                                     </div>
                                 </div>
                             </div>

@@ -127,13 +127,12 @@ const BattleResult = () =>{
                                     <div className={battleResultDetail.state? "text-base my-5":"hidden"}>
                                        获得奖励如下
 
-                                        <div className="grid grid-cols-3 gap-4 mt-3">
+                                        <div className="grid grid-cols-3 gap-4 mt-3 max-h-85 pr-4  scrollbar-thin scrollbar-thumb-custom items-center scrollbar-thumb-rounded-full overflow-y-scroll">
                                             {battleResultDetail.RewardList.map(item=>(
                                                 <a key={item.objectId} href={`https://explorer.sui.io/object/${item.objectId}?network=devnet`}  target="_Blank">
                                                     <img className="rounded-lg" src={item.url} alt=""/>
                                                 </a>
                                             ))}
-
 
                                         </div>
 
