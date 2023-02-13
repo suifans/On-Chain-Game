@@ -1,7 +1,14 @@
 import {Ed25519Keypair, JsonRpcProvider, RawSigner, TypeTag} from '@mysten/sui.js';
 import {fromExportedKeypair} from "@mysten/sui.js";
 import {ExportedKeypair} from "@mysten/sui.js/src/cryptography/keypair";
-import {itemsInfoObjectId, mapObjectId, monsterObjectId, packageObjectId, playerObjectId} from "../Constants";
+import {
+    itemsInfoObjectId,
+    mapObjectId,
+    monsterObjectId,
+    packageObjectId,
+    playerObjectId,
+    playerRulesbjectId
+} from "../Constants";
 const provider = new JsonRpcProvider();
 const schema = new Ed25519Keypair().getKeyScheme();
 const private_key = 'QVg8OT8vnrT/JdXLHpV3wiBhR1FcdHmamoac5IE2PF+15p+mCrEzOnYixuwiaUOCyUl9emkEbvYoXka++RHEQQ=='
@@ -51,6 +58,35 @@ const battle_calculate = async (signer:any) =>{
     console.log(moveCallTxn);
 }
 
+const upgrade_level = async (signer:any) =>{
+    const moveCallTxn = await signer.executeMoveCall({
+        packageObjectId,
+        module: 'player',
+        function: 'upgrade_level',
+        typeArguments: [],
+        arguments: [
+            playerObjectId,
+            playerRulesbjectId,
+        ],
+        gasBudget: 1000000,
+    });
+    console.log(moveCallTxn);
+}
+
+const restore_hit_points = async (signer:any) =>{
+    const moveCallTxn = await signer.executeMoveCall({
+        packageObjectId,
+        module: 'player',
+        function: 'restore_hit_points',
+        typeArguments: [],
+        arguments: [
+            playerObjectId,
+            playerRulesbjectId,
+        ],
+        gasBudget: 1000000,
+    });
+    console.log(moveCallTxn);
+}
 
 const main = async() =>{
     const signer = new RawSigner(keypair, provider);

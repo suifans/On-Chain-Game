@@ -44,7 +44,7 @@ module basic_package::player_rules {
             level_and_gold_cost
         };
         vec_map::insert(&mut player_level_and_attribute.level_and_attribute,2,attribute);
-        vec_map::insert(&mut player_level_and_attribute.level_and_gold_cost,2,1);
+        vec_map::insert(&mut player_level_and_attribute.level_and_gold_cost,2,4);
         transfer::share_object(player_level_and_attribute);
     }
 

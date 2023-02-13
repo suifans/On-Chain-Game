@@ -6,8 +6,8 @@ module basic_package::player {
     use basic_package::monster::{get_monster_defense_lower_limit, MonsterInfo, get_monster_attack_lower_limit, get_monster_hp, get_drop_nft};
     use basic_package::map::{update_mapinfo_monster_number, Map, get_map_monster_number};
     use basic_package::items::ItemsInfo;
-    use sui::devnet_nft;
-    use sui::devnet_nft::DevNetNFT;
+    // use sui::devnet_nft;
+    // use sui::devnet_nft::DevNetNFT;
     use basic_package::player_rules::{PlayerLevelAndAttribute, get_level_hp, get_level_attack_lower_limit, get_level_attack_upper_limit, get_level_defense_lower_limit, get_level_defense_upper_limit, get_level_cost};
 
 
@@ -137,32 +137,35 @@ module basic_package::player {
         get_drop_nft(monster_info,monster_name,items_info,ctx)
     }
 
-
     // public entry fun sell_items(nft:&mut DevNetNFT,player:&mut Player){
     //     devnet_nft::burn(*nft);
     //     player.attribute.gold = player.attribute.gold + 1;
     // }
 
     public entry fun upgrade_level(player: &mut Player,player_rules:&mut PlayerLevelAndAttribute){
-        let level = player.attribute.level;
-        let gold_cost = get_level_cost(player_rules,level);
+        let old_level = player.attribute.level;
+        let new_level = old_level + 1u64;
+        let gold_cost = get_level_cost(player_rules,new_level);
         assert!(player.attribute.gold >= gold_cost,NO_MONEY);
         player.attribute.gold = player.attribute.gold - gold_cost;
-        let new_hp = get_level_hp(player_rules,level);
-        let new_attack_lower_limit = get_level_attack_lower_limit(player_rules,level);
-        let new_attack_upper_limit = get_level_attack_upper_limit(player_rules,level);
-        let new_defense_lower_limit = get_level_defense_lower_limit(player_rules,level);
-        let new_defense_upper_limit = get_level_defense_upper_limit(player_rules,level);
+        let new_hp = get_level_hp(player_rules,new_level);
+        let new_attack_lower_limit = get_level_attack_lower_limit(player_rules,new_level);
+        let new_attack_upper_limit = get_level_attack_upper_limit(player_rules,new_level);
+        let new_defense_lower_limit = get_level_defense_lower_limit(player_rules,new_level);
+        let new_defense_upper_limit = get_level_defense_upper_limit(player_rules,new_level);
         player.attribute.hp = new_hp;
         player.attribute.attack_lower_limit = new_attack_lower_limit;
         player.attribute.attack_upper_limit = new_attack_upper_limit;
         player.attribute.defense_lower_limit = new_defense_lower_limit;
         player.attribute.defense_upper_limit =  new_defense_upper_limit;
+        player.attribute.level = new_level;
     }
 
-    public entry fun restore_hit_points(player: &mut Player){
+    public entry fun restore_hit_points(player: &mut Player,player_rules:&mut PlayerLevelAndAttribute){
         assert!(player.attribute.gold >= 1u64,NO_MONEY);
         player.attribute.gold = player.attribute.gold - 1;
-        player.attribute.hp = 100u64;
+        let level = player.attribute.level;
+        let new_hp = get_level_hp(player_rules,level);
+        player.attribute.hp = new_hp;
     }
 }
