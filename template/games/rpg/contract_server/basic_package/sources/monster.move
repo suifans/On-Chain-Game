@@ -8,7 +8,6 @@ module basic_package::monster {
     use std::vector;
     use sui::devnet_nft;
     use basic_package::items::{ItemsInfo, get_items_info};
-    use sui::stake::value;
 
 
     struct MonsterInfo has key {
