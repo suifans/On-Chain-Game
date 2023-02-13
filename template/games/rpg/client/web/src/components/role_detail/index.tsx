@@ -46,8 +46,8 @@ const RoleDetail = () =>{
                 </button>
                 <div className={roleDetails.id ==""?"hidden":"flex justify-between  w-full  mt-10"}>
 
-                <div>
-                    <div >
+                <div >
+                    <div className="grid grid-cols-1 gap-4">
                         <div>
                             {/*{roleDetails.id}*/}
                             ID :  {ethos.truncateMiddle(roleDetails.id, 5)}
@@ -55,11 +55,21 @@ const RoleDetail = () =>{
                         <div>
                             金币 :  {roleDetails.gold}
                         </div>
-                        <div>
-                            等级 : {roleDetails.level}
+                        <div className="flex items-center">
+                            <div className="flex w-24">
+                                等级 : {roleDetails.level}
+                            </div>
+                            <button className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
+                                升级
+                            </button>
                         </div>
-                        <div>
-                            血量 : {roleDetails.hp}
+                        <div className="flex items-center">
+                            <div className="flex w-24">
+                                血量 : {roleDetails.hp}
+                            </div>
+                            <button className="text-black ml-5 bg-black rounded-lg text-white px-4 py-0.5">
+                                恢复
+                            </button>
                         </div>
                         <div>
                             攻击上限 : {roleDetails.attack_upper_limit}
@@ -209,8 +219,9 @@ const MonsterDetail = () =>{
                                 <div className="border-b border-gray-200 ">
                                 </div>
                                 <Disclosure.Panel className={classNames("px-10 py-4  text-gray-800 font-normal bg-gray-100 list-decimal")}>
-                                    <div>
+                                    <div className=" ">
                                         血量 : {item.detail.hp}
+
                                     </div>
                                     <div>
                                         攻击上限 : {item.detail.attack_upper_limit}
