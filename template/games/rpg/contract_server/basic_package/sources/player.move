@@ -127,6 +127,8 @@ module basic_package::player {
         };
         //update player hp
         player.attribute.hp = player_attribute_hp;
+        //add gold
+        player.attribute.gold = player.attribute.gold + 1u64;
         let old_monster_number = get_map_monster_number(map,map_name,map_types,monster_name,monster_number);
         let new_monster_number = old_monster_number - 1u8;
         // update map monster number
