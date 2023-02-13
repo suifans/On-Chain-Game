@@ -40,44 +40,43 @@ const SelectRoleList = () =>{
     const [mapName,setMapName] = useAtom(MapName)
     const [monsterDetails,setMonsterDetails] = useAtom(MonsterDetails)
     const [downloadData,setDownloadData] = useState(false)
-    useEffect( () => {
-      const query  =async () =>{
-          setDownloadData(true)
-          let info = []
-          for (let i = 0; i < wallet?.contents?.objects.length; i++) {
-              if (wallet?.contents?.objects[i].details.data.type == `${packageObjectId}::player::Player`) {
-                  //查询角色信息
-                  let data = wallet?.contents?.objects[i].details.data.fields
-                  // console.log(data.id)
-                  let result = {
-                      id: data.id.id,
-                      attack_lower_limit: data.attribute.fields.attack_lower_limit,
-                      attack_upper_limit: data.attribute.fields.attack_upper_limit,
-                      defense_lower_limit: data.attribute.fields.defense_lower_limit,
-                      defense_upper_limit: data.attribute.fields.defense_upper_limit,
-                      gold: data.attribute.fields.gold,
-                      hp: data.attribute.fields.hp,
-                      level: data.attribute.fields.level,
-                  }
-                  info.push(result)
-
-              }
-          }
-
-          //查询地图信息
-          const map_name = query_map_info()
-          setMapName(await map_name)
-
-          //查询怪物信息
-          const monsterList = query_monster_info()
-          setMonsterDetails(await monsterList)
-
-          setRoleList(info)
-          setDownloadData(false)
-        }
-
+    useEffect(() => {
+        setDownloadData(true)
         query()
     }, [wallet?.address])
+    const query  =async () =>{
+        let info = []
+        for (let i = 0; i < wallet?.contents?.objects.length; i++) {
+            if (wallet?.contents?.objects[i].details.data.type == `${packageObjectId}::player::Player`) {
+                //查询角色信息
+                let data = wallet?.contents?.objects[i].details.data.fields
+                // console.log(data.id)
+                let result = {
+                    id: data.id.id,
+                    attack_lower_limit: data.attribute.fields.attack_lower_limit,
+                    attack_upper_limit: data.attribute.fields.attack_upper_limit,
+                    defense_lower_limit: data.attribute.fields.defense_lower_limit,
+                    defense_upper_limit: data.attribute.fields.defense_upper_limit,
+                    gold: data.attribute.fields.gold,
+                    hp: data.attribute.fields.hp,
+                    level: data.attribute.fields.level,
+                }
+                info.push(result)
+
+            }
+        }
+
+        //查询地图信息
+        const map_name = query_map_info()
+        setMapName(await map_name)
+
+        //查询怪物信息
+        const monsterList = query_monster_info()
+        setMonsterDetails(await monsterList)
+
+        setRoleList(info)
+        setDownloadData(false)
+    }
 
     const selectRole = (item) =>{
         setRoleDetails(item)
@@ -101,17 +100,18 @@ const SelectRoleList = () =>{
                     },
                 }
                 const result = await wallet.signAndExecuteTransaction(signableTransaction)
+                console.log(result)
                 // @ts-ignore
                 const tx_status = result.effects.status.status;
                 // @ts-ignore
                 const objectId = result.effects.events[1].newObject.objectId
                 if(tx_status == "success"){
                     const provider = new JsonRpcProvider();
-                    const result = await provider.getObject(
+                    const RoleResult = await provider.getObject(
                         objectId
                     );
                     // @ts-ignore
-                    const data = result.details.data.fields
+                    const data = RoleResult.details.data.fields
                     console.log(data)
                     const CreateRole = {
                         id: data.id.id,
@@ -126,15 +126,12 @@ const SelectRoleList = () =>{
                     setRoleDetails(CreateRole)
                     setOpenLoading(false)
                     setSelectRoleList(false)
-                    setSellState({state:true,type:"创建"})
+                    setSellState({state:true,type:"创建",hash: result.certificate.transactionDigest})
                     setSellPop_up_boxState(true)
-                    setTimeout(function() {
-                        setSellPop_up_boxState(false)
-                    },3000)
                 }else {
                     setOpenLoading(false)
                     setSelectRoleList(false)
-                    setSellState({state:false,type:"创建"})
+                    setSellState({state:false,type:"创建",hash: ""})
                     setSellPop_up_boxState(true)
                 }
             } catch (error) {

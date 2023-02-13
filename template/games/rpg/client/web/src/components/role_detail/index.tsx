@@ -120,13 +120,14 @@ const MonsterDetail = () =>{
                 },
             }
             const result = await wallet.signAndExecuteTransaction(signableTransaction)
+            console.log(result)
             // @ts-ignore
             const tx_status = result.effects.status.status;
             if(tx_status == "success"){
                 const data =await query_user_detail(playerObjectId)
                 // @ts-ignore
                 const userResult = data.details.data.fields
-                const result = {
+                const RoleResult = {
                     id: userResult.id.id,
                     attack_lower_limit: userResult.attribute.fields.attack_lower_limit,
                     attack_upper_limit: userResult.attribute.fields.attack_upper_limit,
@@ -136,27 +137,46 @@ const MonsterDetail = () =>{
                     hp: userResult.attribute.fields.hp,
                     level: userResult.attribute.fields.level,
                 }
-                setRoleDetails(result)
+                setRoleDetails(RoleResult)
 
                 const monsterList = query_monster_info()
                 setMonsterDetails(await monsterList)
 
-                setOpenLoading(false)
-                setSellState({state:true,type:"挑战"})
+                setSellState({state:true,type:"挑战",hash: result.certificate.transactionDigest})
                 setSellPop_up_boxState(true)
-                setTimeout(function() {
-                    setSellPop_up_boxState(false)
-                },3000)
 
+                let RewardList = []
+                for (let i = 0 ;i<result.effects.created.length ;i++){
+                    const provider = new JsonRpcProvider();
+                    let rewardResult = await provider.getObject(
+                        result.effects.created[i].reference.objectId
+                    );
+                    console.log("rewardResult",rewardResult)
+                    let reward = {
+                        // @ts-ignore
+                        url:rewardResult.details.data.fields.url,
+                        objectId:result.effects.created[i].reference.objectId
+                    }
+                    RewardList.push(reward)
+                }
+
+                setBattleResultDetail({
+                    state: true,
+                    RewardList
+                })
+                setSelectBattleResultState(true)
+                setOpenLoading(false)
             }else {
                 setOpenLoading(false)
-                setSellState({state:false,type:"挑战"})
+                setSellState({state:false,type:"挑战",hash: ""})
                 setSellPop_up_boxState(true)
+                setBattleResultDetail({state: false,RewardList:[]})
+                setSelectBattleResultState(true)
             }
         } catch (error) {
             console.log(error)
             setOpenLoading(false)
-            setSellState({state:false,type:"签名"})
+            setSellState({state:false,type:"签名",hash: ""})
             setSellPop_up_boxState(true)
         }
 
@@ -175,7 +195,7 @@ const MonsterDetail = () =>{
             <div>
                 怪物列表
             </div>
-            <div className="  w-96    ">
+            <div className="w-96">
                 {monsterDetails.map(item=>(
                     <Disclosure key={item.title}>
                         {({ open }) => (
