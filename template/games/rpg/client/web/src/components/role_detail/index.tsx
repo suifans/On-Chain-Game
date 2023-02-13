@@ -42,6 +42,7 @@ const RoleDetail = () =>{
     const Upgrade = async () => {
         if(Number(roleDetails.gold) >= Number(roleDetails.level) * 4) {
             setOpenLoading(true)
+            setSelectUpgrade(false)
             try {
                 const playerObjectId = roleDetails.id;
                 const signableTransaction = {

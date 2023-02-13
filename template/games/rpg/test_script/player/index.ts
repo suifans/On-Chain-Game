@@ -7,7 +7,7 @@ import {
     monsterObjectId,
     packageObjectId,
     playerObjectId,
-    playerRulesbjectId
+    playerRulesObjectId
 } from "../Constants";
 const provider = new JsonRpcProvider();
 const schema = new Ed25519Keypair().getKeyScheme();
@@ -66,7 +66,7 @@ const upgrade_level = async (signer:any) =>{
         typeArguments: [],
         arguments: [
             playerObjectId,
-            playerRulesbjectId,
+            playerRulesObjectId,
         ],
         gasBudget: 1000000,
     });
@@ -81,7 +81,7 @@ const restore_hit_points = async (signer:any) =>{
         typeArguments: [],
         arguments: [
             playerObjectId,
-            playerRulesbjectId,
+            playerRulesObjectId,
         ],
         gasBudget: 1000000,
     });

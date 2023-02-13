@@ -48,8 +48,9 @@ const BattleResult = () =>{
 
     const check = () =>{
         if(battleResultDetail.state){
-            // setSelectBattleResultState(false)
-            setBattleWinResult(true)
+
+            setSelectBattleResultState(false)
+            // setBattleWinResult(true)
         }else {
             setSelectBattleResultState(false)
         }
