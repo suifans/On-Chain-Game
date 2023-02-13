@@ -12,8 +12,12 @@ const BattleResultState = atom(false)
 //交易弹出框
 const SellPop_up_boxState = atom(false)
 //交易是否成功
-const SellState = atom({state:false,type:""})
-//战斗是否成功
+const SellState = atom({
+    type:"",
+    hash:"",
+    state:false
+})
+
 
 const MapName = atom("Null")
 //地图名字
@@ -21,8 +25,14 @@ const MapName = atom("Null")
 const BattleResultDetail = atom(
     {
         state:false,
+        RewardList:[
+            {
+                url:"",
+                objectId:"",
+            }
+        ]
     })
-//更新角色信息
+//战斗是否成功
 const RoleDetails = atom(
     {
     id:"",
@@ -34,7 +44,7 @@ const RoleDetails = atom(
     hp:"",
     level:"",
 })
-//更新怪物信息
+//更新角色信息
 const MonsterDetails = atom([{
     title:"",
     detail: {
@@ -46,7 +56,7 @@ const MonsterDetails = atom([{
     },
     number:""
 }])
-
+//更新怪物信息
 
 
 export {MapName,SellState,SellPop_up_boxState,Select_RoleList,Select_LoginState,RoleDetails,MonsterDetails,LoadingState,BattleResultState,BattleResultDetail}

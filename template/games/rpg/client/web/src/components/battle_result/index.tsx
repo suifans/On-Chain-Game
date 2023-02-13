@@ -11,6 +11,7 @@ import {Dialog, Transition} from "@headlessui/react";
 import React, {Fragment, useEffect,useState} from "react";
 import {ethos} from "ethos-connect";
 import Loading from "../loading";
+import {JsonRpcProvider} from "@mysten/sui.js";
 
 
 const BattleResult = () =>{
@@ -31,9 +32,23 @@ const BattleResult = () =>{
 
     const [sellState,setSellState] =useAtom(SellState)
 
+    useEffect(()=>{
+        const query  =async () =>{
+            // const provider = new JsonRpcProvider();
+            // const RoleResult = await provider.getObject(
+            //     "0xe7f75a73bcded2b7d1d207a402337c3f09852aa9"
+            // );
+            // // @ts-ignore
+            // console.log("xxxxxxxxxx",RoleResult.details.data.fields.url)
+        }
+        query()
+
+
+    },[])
+
     const check = () =>{
         if(battleResultDetail.state){
-            setSelectBattleResultState(false)
+            // setSelectBattleResultState(false)
             setBattleWinResult(true)
         }else {
             setSelectBattleResultState(false)
@@ -53,7 +68,7 @@ const BattleResult = () =>{
         setTimeout(function() {
             setOpenLoading(false)
             //是否成功
-            setSellState({state:true,type:"交易"})
+            setSellState({state:true,type:"交易",hash: ""})
 
             setSellPop_up_boxState(true)
 
@@ -111,18 +126,16 @@ const BattleResult = () =>{
 
                                     <div className={battleResultDetail.state? "text-base my-5":"hidden"}>
                                        获得奖励如下
-                                        <div className="flex justify-between mt-3">
-                                           <div>
-                                               经验 +100
-                                           </div>
-                                            <div>
-                                                金币 +100
-                                            </div>
-                                            <div>
-                                               武器 蓝色宝剑
-                                            </div>
+
+                                        <div className="grid grid-cols-3 gap-4 mt-3 max-h-85 pr-4  scrollbar-thin scrollbar-thumb-custom items-center scrollbar-thumb-rounded-full overflow-y-scroll">
+                                            {battleResultDetail.RewardList.map(item=>(
+                                                <a key={item.objectId} href={`https://explorer.sui.io/object/${item.objectId}?network=devnet`}  target="_Blank">
+                                                    <img className="rounded-lg" src={item.url} alt=""/>
+                                                </a>
+                                            ))}
 
                                         </div>
+
                                     </div>
 
                                     <div className={battleResultDetail.state? "hidden":"text-center py-5"}>
