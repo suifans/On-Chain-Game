@@ -124,26 +124,14 @@ const MonsterDetail = () =>{
             // @ts-ignore
             const tx_status = result.effects.status.status;
             if(tx_status == "success"){
-                const data =await query_user_detail(playerObjectId)
-                // @ts-ignore
-                const userResult = data.details.data.fields
-                const RoleResult = {
-                    id: userResult.id.id,
-                    attack_lower_limit: userResult.attribute.fields.attack_lower_limit,
-                    attack_upper_limit: userResult.attribute.fields.attack_upper_limit,
-                    defense_lower_limit: userResult.attribute.fields.defense_lower_limit,
-                    defense_upper_limit: userResult.attribute.fields.defense_upper_limit,
-                    gold: userResult.attribute.fields.gold,
-                    hp: userResult.attribute.fields.hp,
-                    level: userResult.attribute.fields.level,
-                }
-                setRoleDetails(RoleResult)
 
+                const data = await query_user_detail(playerObjectId)
+                setRoleDetails(data)
+                //刷新用户信息
                 const monsterList = query_monster_info()
                 setMonsterDetails(await monsterList)
+                //刷新怪物信息
 
-                setSellState({state:true,type:"挑战",hash: result.certificate.transactionDigest})
-                setSellPop_up_boxState(true)
 
                 let RewardList = []
                 for (let i = 0 ;i<result.effects.created.length ;i++){
@@ -159,11 +147,13 @@ const MonsterDetail = () =>{
                     }
                     RewardList.push(reward)
                 }
-
                 setBattleResultDetail({
                     state: true,
                     RewardList
                 })
+                //获取的NFT信息
+                setSellState({state:true,type:"挑战",hash: result.certificate.transactionDigest})
+                setSellPop_up_boxState(true)
                 setSelectBattleResultState(true)
                 setOpenLoading(false)
             }else {
