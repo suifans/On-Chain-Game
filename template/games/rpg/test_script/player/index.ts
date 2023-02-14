@@ -88,9 +88,27 @@ const restore_hit_points = async (signer:any) =>{
     console.log(moveCallTxn);
 }
 
+
+const sell_items = async (signer:any) =>{
+    const nftObjectId = '0x44d76ccafc9d6aee304b11f7dfa155c03843daf4'
+    const moveCallTxn = await signer.executeMoveCall({
+        packageObjectId,
+        module: 'player',
+        function: 'sell_items',
+        typeArguments: [],
+        arguments: [
+            nftObjectId,
+            playerObjectId
+        ],
+        gasBudget: 1000000,
+    });
+    console.log(moveCallTxn);
+}
+
 const main = async() =>{
     const signer = new RawSigner(keypair, provider);
     // await create_player(signer)
-    await battle_calculate(signer)
+    // await battle_calculate(signer)
+    await sell_items(signer)
 }
 main()

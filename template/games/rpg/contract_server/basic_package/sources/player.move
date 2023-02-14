@@ -9,6 +9,8 @@ module basic_package::player {
     // use sui::devnet_nft;
     // use sui::devnet_nft::DevNetNFT;
     use basic_package::player_rules::{PlayerLevelAndAttribute, get_level_hp, get_level_attack_lower_limit, get_level_attack_upper_limit, get_level_defense_lower_limit, get_level_defense_upper_limit, get_level_cost};
+    use sui::devnet_nft;
+    use sui::devnet_nft::DevNetNFT;
 
 
     const MONSTER_WON: u64 = 0;
@@ -127,20 +129,20 @@ module basic_package::player {
         };
         //update player hp
         player.attribute.hp = player_attribute_hp;
-        //add gold
-        player.attribute.gold = player.attribute.gold + 1u64;
         let old_monster_number = get_map_monster_number(map,map_name,map_types,monster_name,monster_number);
         let new_monster_number = old_monster_number - 1u8;
         // update map monster number
         update_mapinfo_monster_number(map,map_name,map_types,monster_name,old_monster_number,new_monster_number);
+        //add gold
+        player.attribute.gold = player.attribute.gold + 1u64;
         // get drop nft and send to player
         get_drop_nft(monster_info,monster_name,items_info,ctx)
     }
 
-    // public entry fun sell_items(nft:&mut DevNetNFT,player:&mut Player){
-    //     devnet_nft::burn(*nft);
-    //     player.attribute.gold = player.attribute.gold + 1;
-    // }
+    public entry fun sell_items(nft:DevNetNFT,player:&mut Player){
+        devnet_nft::burn(nft);
+        player.attribute.gold = player.attribute.gold + 1;
+    }
 
     public entry fun upgrade_level(player: &mut Player,player_rules:&mut PlayerLevelAndAttribute){
         let old_level = player.attribute.level;
