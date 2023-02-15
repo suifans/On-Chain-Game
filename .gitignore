@@ -20,3 +20,9 @@ Cargo.lock
 build/
 
 .idea/
+
+# log files
+*.log*
+
+# constants documenting my keys
+*Constants/index.ts*
