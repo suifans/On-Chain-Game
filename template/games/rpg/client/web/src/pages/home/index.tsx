@@ -7,6 +7,7 @@ import {useAtom} from "jotai";
 import {MonsterDetails, RoleDetails, Select_LoginState, Select_RoleList} from "../../jotai";
 import RoleDetail from "../../components/role_detail";
 import Pop_up_box from "../../components/pop_up_box";
+import Link from "next/link";
 
 const Home = () =>{
     const { status, wallet } = ethos.useWallet();
@@ -47,6 +48,7 @@ const Home = () =>{
                 </div>
 
                 <SelectRoleList/>
+
 
                 <div className="flex items-center  mx-auto mt-5 max-w-7xl">
 

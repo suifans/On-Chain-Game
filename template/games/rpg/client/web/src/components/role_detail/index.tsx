@@ -140,6 +140,21 @@ const RoleDetail = () =>{
 
     }
 
+    const Copy=(span)=>{
+        console.log(span)
+        const spanText = span;
+        const oInput = document.createElement('input');
+        oInput.value = spanText;
+        document.body.appendChild(oInput);
+        oInput.select();
+        document.execCommand('Copy');
+        oInput.className = 'oInput';
+        oInput.style.display = 'none';
+        document.body.removeChild(oInput);
+        setSellState({state:true,type:"复制",hash: ""})
+        setSellPop_up_boxState(true)
+
+    }
     return(
         <>
             <div className="w-full">
@@ -156,6 +171,11 @@ const RoleDetail = () =>{
                         <div>
                             {/*{roleDetails.id}*/}
                             ID :  {ethos.truncateMiddle(roleDetails.id, 5)}
+                            <button onClick={() => {
+                                // @ts-ignore
+                                Copy(`${roleDetails.id}`);}} className="text-neutral-600">
+                                <img className="w-4 ml-1" src="/copy.svg" alt=""/>
+                            </button>
                         </div>
                         <div>
                             金币 :  {roleDetails.gold}
