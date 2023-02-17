@@ -1,10 +1,8 @@
-// const packageObjectId = '0x21872eab1d01d73bc1bddc38a1e761780281ff08'
-const packageObjectId = '0x427cd1fce648976f7ec64206ae6a7669f7f8480f'
-const mapObjectId = '0x8e469761960fb6572a34699f3c2e6f2ed105ce80'
-const monsterObjectId = '0x0af2c8a97e61f3e535be6095565b809665b6cde4'
-// const itemsInfoObjectId = '0x2f4027f4926a7bdc957809ab1a57a123f0430b39'
-const itemsInfoObjectId = '0xaf1e2c5084838161279075c559bd21480d9f0287'
-const playerRulesObjectId = '0x9889d5dcdf9b4ad11a7ead9a31eee03fac5923f2'
+const packageObjectId = '0xd617b5a28ea3a855979799ebbb00e311b4dbe226'
+const mapObjectId = '0x613f665f7881df0122990037df6baa75ec2152ac'
+const monsterObjectId = '0xa3bf9b1b2b274371d4dadafbf0a2fad4bb665153'
+const itemsInfoObjectId = '0x4f159f8b8f0a16ebd9db33de429f607aefb5ed82'
+const playerRulesObjectId = '0x0c93a1668b3322edbc7cbeb995bea1a4fb441323'
 const playerObjectId = '0xb4b04cb755abe7f27d1f6c950434e1bf93fa331e'
 export {
     packageObjectId,

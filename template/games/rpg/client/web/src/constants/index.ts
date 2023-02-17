@@ -1,8 +1,8 @@
-const packageObjectId = '0x78f6ced6b9645519f7e9e9222e3cf4a66c8d56d1'
-const mapObjectId = '0x26348ceda7c2f3fab8e3038c0f41eb675e0567e1'
-const monsterObjectId = '0x5e6fc70fcd0d728c4f845f4a49f958e135109463'
-const itemsInfoObjectId = '0x48990e899ada81195dff62d5e748a52bf161a378'
-const playerRulesObjectId = '0xfee595f64b9cecf3537f2b68e6ecad8867fd2581'
+const packageObjectId = '0xd617b5a28ea3a855979799ebbb00e311b4dbe226'
+const mapObjectId = '0x613f665f7881df0122990037df6baa75ec2152ac'
+const monsterObjectId = '0xa3bf9b1b2b274371d4dadafbf0a2fad4bb665153'
+const itemsInfoObjectId = '0x4f159f8b8f0a16ebd9db33de429f607aefb5ed82'
+const playerRulesObjectId = '0x0c93a1668b3322edbc7cbeb995bea1a4fb441323'
 export {
     packageObjectId,
     mapObjectId,
