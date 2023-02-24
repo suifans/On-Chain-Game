@@ -5,7 +5,7 @@ import {itemsInfoObjectId, mapObjectId, packageObjectId} from "../Constants";
 
 const provider = new JsonRpcProvider();
 const schema = new Ed25519Keypair().getKeyScheme();
-const private_key = 'c8cJIQOtx55JUNrT0VAGd43cEvscqnO+u4clcXickSlg+Q1PFrl1qKuBlKU0/7KA62GPNDL2++KaFMjHFfZKfg=='
+const private_key = 'QVg8OT8vnrT/JdXLHpV3wiBhR1FcdHmamoac5IE2PF+15p+mCrEzOnYixuwiaUOCyUl9emkEbvYoXka++RHEQQ=='
 const key_pair_struct:ExportedKeypair = {
     schema,
     privateKey:private_key
@@ -289,7 +289,7 @@ const main =  async () =>{
     const signer = new RawSigner(keypair, provider);
     
     // tested by Henry
-    // await create_items_info(signer); 
+    await create_items_info(signer);
     
     // tested at txn digest: 5xeV2m6nBrWw8GQt4mhLQGmR4yE8T58yX8DKaspvaTA3, created ItemsInfo at object id: 0xaf1e2c5084838161279075c559bd21480d9f0287
     // await create_items_info_batch(signer); 
